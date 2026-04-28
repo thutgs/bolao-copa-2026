@@ -1,0 +1,23 @@
+# Dependências
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# Pastas de Build (Código compilado)
+/dist
+/build
+
+# Arquivos de Ambiente (MUITO IMPORTANTE)
+.env
+.env.test
+.env.production
+.env.local
+
+# Logs e arquivos de SO
+logs
+*.log
+.DS_Store
+
+# Pastas de IDEs (VS Code, WebStorm, etc)
+.vscode/
+.idea/
