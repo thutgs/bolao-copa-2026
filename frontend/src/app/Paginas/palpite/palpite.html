@@ -3,9 +3,6 @@
     <h2 class="text-3xl font-black text-[#05060c]">Palpites</h2>
     <p class="text-sm text-gray-500">Dê seus palpites e acompanhe seus resultados!</p>
   </div>
-  <div class="bg-white border border-gray-200 px-4 py-2 rounded-xl flex items-center gap-3 shadow-sm">
-    <span class="text-xs font-bold text-gray-400">Bolão Oficial Copa 2026</span>
-  </div>
 </header>
 
 <div class="flex gap-1 border-b border-gray-200 mb-8">
@@ -23,133 +20,208 @@
   </button>
 </div>
 
+<!-- ABA 1: PRÓXIMOS JOGOS -->
+@if (abaAtiva === 'proximos') {
 <section class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 mb-8">
   <div class="flex items-center justify-between mb-8">
     <h3 class="text-lg font-bold text-[#05060c] flex items-center gap-2">
-      <span class="text-[#4f39f6]">🕒</span> Próximos Jogos
+      <span class="text-[#4f39f6]"></span> Próximos Jogos
     </h3>
-    <span class="text-[10px] text-gray-400 uppercase font-black tracking-widest">Fuso horário: Brasília ▼</span>
+    <span class="text-[10px] text-gray-400 uppercase font-black tracking-widest">Fuso horário: Brasília</span>
   </div>
 
   <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
     @for (jogo of listaDeJogos; track jogo.id) {
-      <div class="flex items-center justify-between py-4 border border-gray-100 rounded-2xl px-6 shadow-sm group">
-          <div class="flex items-center gap-4 w-1/3">
-            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100 shadow-sm overflow-hidden">
-               <img [src]="jogo.bandeiraA" class="w-full h-full object-cover" alt="Bandeira">
-            </div>
-            <div>
-              <p class="font-black text-gray-900 text-sm leading-tight">{{ jogo.timeA }}</p>
-              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ jogo.siglaA }}</p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-4 justify-center w-1/3">
-            @if (podePalpitar(jogo)) {
-              <input type="number" [(ngModel)]="jogo.palpiteA" placeholder="-" class="w-16 h-10 bg-white border border-gray-200 rounded-lg text-center text-lg font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner">
-            } @else {
-              <div class="w-16 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-lg font-black text-gray-500 border border-gray-200">{{ jogo.palpiteA !== null ? jogo.palpiteA : '-' }}</div>
-            }
-            <div class="text-center px-2">
-              <span class="text-[9px] text-[#4f39f6] font-bold block mb-1 whitespace-nowrap">{{ jogo.data }}</span>
-              <span class="text-gray-300 font-black text-sm">X</span>
-              <p class="text-[8px] text-gray-400 mt-1 font-bold uppercase">{{ jogo.grupo }}</p>
-            </div>
-            @if (podePalpitar(jogo)) {
-              <input type="number" [(ngModel)]="jogo.palpiteB" placeholder="-" class="w-16 h-10 bg-white border border-gray-200 rounded-lg text-center text-lg font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner">
-            } @else {
-              <div class="w-16 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-lg font-black text-gray-500 border border-gray-200">{{ jogo.palpiteB !== null ? jogo.palpiteB : '-' }}</div>
-            }
-          </div>
-
-          <div class="flex items-center justify-end gap-4 w-1/3">
-            <div class="text-right">
-              <p class="font-black text-gray-900 text-sm leading-tight">{{ jogo.timeB }}</p>
-              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ jogo.siglaB }}</p>
-            </div>
-            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100 shadow-sm overflow-hidden">
-                <img [src]="jogo.bandeiraB" class="w-full h-full object-cover" alt="Bandeira">
-            </div>
-            @if (podePalpitar(jogo)) {
-              <button (click)="salvarPalpite(jogo)" class="ml-4 bg-[#4f39f6] text-white px-6 py-3 rounded-xl font-bold text-[11px] hover:bg-[#3d2bd1] transition-all cursor-pointer shadow-md">
-                Salvar Palpite
-              </button>
-            } @else {
-              <div class="ml-4 px-6 py-3 rounded-xl font-bold text-[11px] text-gray-400 bg-gray-50 border border-gray-200">
-                Encerrado
+      <div class="flex items-center justify-between py-4 border border-gray-100 rounded-2xl px-6 shadow-sm group w-full gap-4 hover:border-gray-200 transition-colors">
+          
+        <!-- Bloco Centralizado (Times + Placar) -->
+        <div class="flex items-center justify-center flex-1 gap-4">
+            
+            <!-- Time A (Alinhado à direita) -->
+            <div class="flex items-center justify-end gap-4 flex-1">
+              <div class="text-right">
+                <p class="font-black text-gray-900 text-sm leading-tight">{{ jogo.timeA }}</p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ jogo.siglaA }}</p>
               </div>
-            }
-          </div>
+              <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100 shadow-sm overflow-hidden shrink-0">
+                 <img [src]="jogo.bandeiraA" class="w-full h-full object-cover" alt="Bandeira">
+              </div>
+            </div>
+
+            <!-- Placar com os Inputs e Informações (Fontes aumentadas) -->
+            <div class="flex items-center justify-center gap-3 shrink-0">
+              @if (podePalpitar(jogo)) {
+                <input type="number" min="0" (focus)="jogo.palpiteA = jogo.palpiteA ?? 0" [(ngModel)]="jogo.palpiteA" placeholder="-" class="w-16 h-12 bg-white border border-gray-200 rounded-xl text-center text-xl font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner">
+              } @else {
+                <div class="w-16 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-xl font-black text-gray-500 border border-gray-200">{{ jogo.palpiteA !== null ? jogo.palpiteA : '-' }}</div>
+              }
+              
+              <div class="text-center px-2 min-w-[110px]">
+                <!-- Fonte da Data aumentada -->
+                <span class="text-xs text-[#4f39f6] font-bold block mb-1 whitespace-nowrap">{{ jogo.data }}</span>
+                <span class="text-gray-300 font-black text-sm">X</span>
+                <!-- Fonte do Grupo/Fase aumentada -->
+                <p class="text-[10px] text-gray-400 mt-1 font-bold uppercase">{{ jogo.grupo }}</p>
+              </div>
+
+              @if (podePalpitar(jogo)) {
+                <input type="number" min="0" (focus)="jogo.palpiteB = jogo.palpiteB ?? 0" [(ngModel)]="jogo.palpiteB" placeholder="-" class="w-16 h-12 bg-white border border-gray-200 rounded-xl text-center text-xl font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner">
+              } @else {
+                <div class="w-16 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-xl font-black text-gray-500 border border-gray-200">{{ jogo.palpiteB !== null ? jogo.palpiteB : '-' }}</div>
+              }
+            </div>
+
+            <!-- Time B (Alinhado à esquerda) -->
+            <div class="flex items-center justify-start gap-4 flex-1">
+              <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100 shadow-sm overflow-hidden shrink-0">
+                  <img [src]="jogo.bandeiraB" class="w-full h-full object-cover" alt="Bandeira">
+              </div>
+              <div class="text-left">
+                <p class="font-black text-gray-900 text-sm leading-tight">{{ jogo.timeB }}</p>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ jogo.siglaB }}</p>
+              </div>
+            </div>
+
         </div>
-      } @empty {
-        <div class="text-center py-20 text-gray-400 border border-dashed border-gray-200 rounded-2xl">
-          <p>Nenhum jogo disponível no momento.</p>
+
+        <!-- Botão de Salvar Palpite (Isolado à direita com tamanho fixo) -->
+        <div class="shrink-0 ml-4 w-32 flex justify-end">
+          @if (podePalpitar(jogo)) {
+            <button (click)="salvarPalpite(jogo)" class="bg-[#4f39f6] text-white px-4 py-3 rounded-xl font-bold text-[11px] hover:bg-[#3d2bd1] transition-all cursor-pointer shadow-md w-full text-center">
+              Salvar Palpite
+            </button>
+          } @else {
+            <div class="px-4 py-3 rounded-xl font-bold text-[11px] text-gray-400 bg-gray-50 border border-gray-200 w-full text-center">
+              Encerrado
+            </div>
+          }
         </div>
-      }
+
+      </div>
+    } @empty {
+      <div class="text-center py-20 text-gray-400 border border-dashed border-gray-200 rounded-2xl">
+        <p>Você já palpitou em todos os jogos disponíveis! 🏆</p>
+      </div>
+    }
     </div>
 </section>
+}
 
+<!-- ABA 2: MEU EXTRATO -->
+@if (abaAtiva === 'extrato') {
 <section class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
   <div class="flex items-center justify-between mb-6">
     <h3 class="text-lg font-bold text-[#05060c] flex items-center gap-2">
-      <span class="text-[#4f39f6]">🕒</span> Meu Extrato
+      <span class="text-[#4f39f6]"></span> Meu Extrato
     </h3>
   </div>
   <div class="max-h-[500px] overflow-y-auto pr-2">
-    <table class="w-full">
+    <!-- Adicionado table-fixed para travar o alinhamento das colunas com os cabeçalhos -->
+    <table class="w-full table-fixed">
       <thead class="text-[10px] text-gray-400 uppercase font-black border-b border-gray-50">
         <tr>
-          <th class="text-left pb-4">Data</th>
-          <th class="text-left pb-4">Jogo</th>
-          <th class="text-center pb-4">Resultado</th>
-          <th class="text-center pb-4">Seu Palpite</th>
-          <th class="text-right pb-4">Pontos</th>
+          <!-- Larguras travadas em porcentagem -->
+          <th class="text-left pb-4 w-[25%] pl-2">Data</th>
+          <th class="text-center pb-4 w-[40%]">Jogo / Resultado Oficial</th>
+          <th class="text-center pb-4 w-[20%]">Seu Palpite</th>
+          <th class="text-center pb-4 w-[8%]">Pontos</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-50 text-sm">
         @for (palpite of meuExtrato; track palpite.id) {
-          <tr>
-            <td class="py-5 font-bold text-[#88E788]">{{ palpite.data }}</td>
-            <td class="py-5 flex items-center gap-3">
-              <div class="w-6 h-4 bg-gray-100 rounded-sm overflow-hidden flex items-center justify-center">
-                <img [src]="palpite.bandeiraA" class="w-full h-full object-cover" alt="Bandeira">
+          <tr class="hover:bg-gray-50 transition-colors">
+            
+            <!-- Data -->
+            <td class="py-5 font-bold text-[#4f39f6] pl-2">{{ palpite.data }}</td>
+            
+            <!-- Jogo -->
+            <td class="py-5">
+              <div class="flex items-center justify-center gap-3 w-full">
+                <span class="font-medium text-right flex-1 truncate">{{ palpite.timeA }}</span>
+                <div class="w-8 h-8 rounded-full border border-gray-100 overflow-hidden shrink-0 shadow-sm">
+                  <img [src]="palpite.bandeiraA" class="w-full h-full object-cover" alt="Time A">
+                </div>
+                
+                <!-- Placar Central -->
+                <div class="flex items-center justify-center font-black bg-gray-50 px-4 py-1.5 rounded-lg border border-gray-200 min-w-[80px]">
+                  @if (palpite.golsAReal !== null && palpite.golsBReal !== null) {
+                    <span class="text-[#05060c] text-base w-4 text-center inline-block">{{ palpite.golsAReal }}</span>
+                    <span class="text-gray-400 text-xs mx-2">X</span>
+                    <span class="text-[#05060c] text-base w-4 text-center inline-block">{{ palpite.golsBReal }}</span>
+                  } @else {
+                    <span class="text-[#05060c] text-base w-4 text-center inline-block"></span>
+                    <span class="text-gray-400 text-xs mx-2">X</span>
+                    <span class="text-[#05060c] text-base w-4 text-center inline-block"></span>
+                  }
+                </div>
+
+                <div class="w-8 h-8 rounded-full border border-gray-100 overflow-hidden shrink-0 shadow-sm">
+                  <img [src]="palpite.bandeiraB" class="w-full h-full object-cover" alt="Time B">
+                </div>
+                <span class="font-medium text-left flex-1 truncate">{{ palpite.timeB }}</span>
               </div>
-              <span class="font-medium">{{ palpite.timeA }} vs {{ palpite.timeB }}</span>
             </td>
+            
+            <!-- SEU PALPITE (COM LÓGICA DE EDIÇÃO) -->
             <td class="py-5 text-center">
-              @if (palpite.golsAReal !== null && palpite.golsBReal !== null) {
-                <span class="bg-gray-100 px-3 py-1 rounded-md text-xs font-mono">{{ palpite.golsAReal }} x {{ palpite.golsBReal }}</span>
+              @if (!palpite.editando) {
+                <!-- Modo Visualização -->
+<div class="flex flex-col items-center justify-center">
+  <div>
+    <span class="font-black text-[#05060c] text-base">{{ palpite.palpiteA }}</span>
+    <span class="text-gray-400 mx-2 text-xs">X</span>
+    <span class="font-black text-[#05060c] text-base">{{ palpite.palpiteB }}</span>
+  </div>
+  
+  <!-- A MÁGICA ACONTECE AQUI: Adicione o && palpite.pontos === null -->
+  @if (palpite.isPendente && palpite.pontos === null) {
+    <button (click)="palpite.editando = true" class="text-[10px] text-[#4f39f6] font-bold mt-1 hover:text-[#3d2bd1] flex items-center justify-center gap-1 transition-colors group">
+      ✏️ Editar
+    </button>
+  }
+</div>
               } @else {
-                <span class="text-xs text-gray-400 italic">Pendente</span>
+                <!-- Modo Edição -->
+                <div class="flex flex-col items-center justify-center gap-2">
+                  <div class="flex items-center justify-center gap-2">
+                    <input type="number" min="0" (focus)="palpite.novoPalpiteA = palpite.novoPalpiteA ?? 0" [(ngModel)]="palpite.novoPalpiteA" class="w-12 h-8 text-center border border-[#4f39f6] rounded-md font-black text-sm outline-none bg-white shadow-inner">
+                    <span class="text-xs text-gray-400">X</span>
+                    <input type="number" min="0" (focus)="palpite.novoPalpiteB = palpite.novoPalpiteB ?? 0" [(ngModel)]="palpite.novoPalpiteB" class="w-12 h-8 text-center border border-[#4f39f6] rounded-md font-black text-sm outline-none bg-white shadow-inner">
+                  </div>
+                  <div class="flex gap-2">
+                    <button (click)="salvarEdicao(palpite)" class="text-[10px] bg-[#88E788]/20 text-green-700 px-3 py-1 rounded font-bold hover:bg-[#88E788]/40 transition-colors">Salvar</button>
+                    <button (click)="palpite.editando = false" class="text-[10px] bg-red-50 text-red-600 px-3 py-1 rounded font-bold hover:bg-red-100 transition-colors">Cancelar</button>
+                  </div>
+                </div>
               }
             </td>
-            <td class="py-5 text-center font-bold">{{ palpite.palpiteA }} x {{ palpite.palpiteB }}</td>
-            <td class="py-5 text-right">
+            
+            <!-- Pontos -->
+            <td class="py-5 text-right pr-2">
               @if (palpite.pontos !== null) {
                 @if (palpite.pontos === 3) {
-                  <span class="bg-[#88E788]/10 text-[#05060c] border border-[#88E788] px-3 py-1 rounded-full text-[10px] font-black">+3 PTS</span>
+                  <span class="inline-flex items-center gap-1 bg-[#88E788]/20 text-green-700 border border-[#88E788] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                    ✨ +3 PTS
+                  </span>
                 } @else if (palpite.pontos === 1) {
                   <span class="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full text-[10px] font-black">+1 PT</span>
                 } @else {
                   <span class="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full text-[10px] font-black">0 PTS</span>
                 }
               } @else {
-                <span class="text-xs text-gray-400">-</span>
+                <span class="bg-gray-100 text-gray-500 border border-gray-200 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider inline-block">
+                  Pendente
+                </span>
               }
             </td>
           </tr>
         } @empty {
           <tr>
-            <td colspan="5" class="text-center py-10 text-gray-400">Nenhum palpite registrado no extrato.</td>
+            <td colspan="4" class="text-center py-10 text-gray-400">Nenhum palpite registrado no extrato.</td>
           </tr>
         }
       </tbody>
     </table>
   </div>
-  
-  <div class="mt-6 text-center">
-    <button class="text-[13px] font-bold text-[#4f39f6] hover:text-[#3d2bd1] transition flex items-center gap-1 mx-auto">
-      Ver histórico completo <span>&gt;</span>
-    </button>
-  </div>
 </section>
+}
