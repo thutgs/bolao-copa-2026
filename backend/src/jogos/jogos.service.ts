@@ -53,6 +53,29 @@ export class JogosService {
     });
   }
 
+  async getNextMatches(limit: number = 4) {
+    const jogos = await this.jogoRepository.find({
+      where: { status: 'pendente' },
+      relations: ['selecao_A', 'selecao_B'],
+      order: { data_hora_inicio: 'ASC' },
+      take: limit
+    });
+
+    return jogos.map(jogo => ({
+      id: jogo.id,
+      teamA: jogo.selecao_A.nome,
+      teamB: jogo.selecao_B.nome,
+      flagAUrl: jogo.selecao_A.url_bandeira || `https://flagcdn.com/w40/${jogo.selecao_A.nome.toLowerCase().replace(/\s/g, '-')}.png`,
+      flagBUrl: jogo.selecao_B.url_bandeira || `https://flagcdn.com/w40/${jogo.selecao_B.nome.toLowerCase().replace(/\s/g, '-')}.png`,
+      date: jogo.data_hora_inicio.toISOString().split('T')[0],
+      time: jogo.data_hora_inicio.toTimeString().split(' ')[0].substring(0, 5),
+      estadio: jogo.fase,
+      status: jogo.status,
+      placarA: jogo.gols_A_real,
+      placarB: jogo.gols_B_real
+    }));
+  }
+
   async findOne(id: number) {
     const jogo = await this.jogoRepository.findOne({
       where: { id },
