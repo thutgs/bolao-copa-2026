@@ -16,6 +16,12 @@ export class ShellLayoutComponent {
 
   currentUser = computed(() => this.authService.getUser());
 
+  // Verifica se o usuário logado possui a flag is_global_admin como verdadeira
+  isAdmin = computed(() => {
+    const user = this.currentUser();
+    return user?.is_global_admin === true; 
+  });
+  
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth']);

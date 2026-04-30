@@ -5,12 +5,19 @@ import { Usuario } from './entities/usuario.entity';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto'; // Importação nova
 import * as bcrypt from 'bcrypt';
+import { UsuarioBolao } from '../boloes/entities/usuario-bolao.entity';
+import { Palpite } from '../palpites/entities/palpite.entity';
 
 @Injectable()
 export class UsuariosService {
   constructor(
     @InjectRepository(Usuario)
     private usuarioRepository: Repository<Usuario>,
+    // Adicione os repositórios necessários
+    @InjectRepository(Palpite)
+    private palpiteRepository: Repository<Palpite>,
+    @InjectRepository(UsuarioBolao)
+    private usuarioBolaoRepository: Repository<UsuarioBolao>,
   ) {}
 
 // Dentro do seu usuarios.service.ts, atualize o método create:
@@ -85,5 +92,37 @@ export class UsuariosService {
   // NOVO MÉTODO PARA BUSCAR USUÁRIO PELO E-MAIL, USADO NO LOGIN
   async findByEmail(email: string) {
     return await this.usuarioRepository.findOne({ where: { email } });
+  }
+
+  // NOVO: Método de estatísticas do usuário para o Dashboard
+  async getEstatisticas(usuarioId: number) {
+    const usuario = await this.findOne(usuarioId);
+
+    const palpites = await this.palpiteRepository.find({
+      where: { usuario: { id: usuarioId } },
+    });
+
+    // Filtra para contar apenas os jogos finalizados (onde pontos_obtidos não é nulo)
+    const palpitesProcessados = palpites.filter(p => p.pontos_obtidos !== null);
+
+    const acertosExatos = palpitesProcessados.filter(p => p.pontos_obtidos === 3).length;
+    const acertosTendencia = palpitesProcessados.filter(p => p.pontos_obtidos === 1).length;
+    const erros = palpitesProcessados.filter(p => p.pontos_obtidos === 0).length;
+
+    // Busca a pontuação total do primeiro bolão que o usuário participa
+    // (Ajuste a lógica se ele participar de vários bolões)
+    const participacao = await this.usuarioBolaoRepository.findOne({
+      where: { usuario: { id: usuarioId } }
+    });
+
+    return {
+      nome: usuario.nome,
+      pontos: participacao ? participacao.pontuação_total : 0,
+      posicao: 1, // Vamos assumir 1 por enquanto, o front-end realinha
+      acertosExatos,
+      acertosTendencia,
+      erros,
+      total: palpitesProcessados.length
+    };
   }
 }

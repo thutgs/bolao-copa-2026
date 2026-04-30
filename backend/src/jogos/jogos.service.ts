@@ -61,19 +61,29 @@ export class JogosService {
       take: limit
     });
 
-    return jogos.map(jogo => ({
-      id: jogo.id,
-      teamA: jogo.selecao_A.nome,
-      teamB: jogo.selecao_B.nome,
-      flagAUrl: jogo.selecao_A.url_bandeira || `https://flagcdn.com/w40/${jogo.selecao_A.nome.toLowerCase().replace(/\s/g, '-')}.png`,
-      flagBUrl: jogo.selecao_B.url_bandeira || `https://flagcdn.com/w40/${jogo.selecao_B.nome.toLowerCase().replace(/\s/g, '-')}.png`,
-      date: jogo.data_hora_inicio.toISOString().split('T')[0],
-      time: jogo.data_hora_inicio.toTimeString().split(' ')[0].substring(0, 5),
-      estadio: jogo.fase,
-      status: jogo.status,
-      placarA: jogo.gols_A_real,
-      placarB: jogo.gols_B_real
-    }));
+    return jogos.map(jogo => {
+      // Extraindo dia, mês, ano, hora e minuto respeitando o fuso horário local
+      const d = jogo.data_hora_inicio;
+      const ano = d.getFullYear();
+      const mes = String(d.getMonth() + 1).padStart(2, '0');
+      const dia = String(d.getDate()).padStart(2, '0');
+      const horas = String(d.getHours()).padStart(2, '0');
+      const minutos = String(d.getMinutes()).padStart(2, '0');
+
+      return {
+        id: jogo.id,
+        teamA: jogo.selecao_A.nome,
+        teamB: jogo.selecao_B.nome,
+        flagAUrl: jogo.selecao_A.url_bandeira || `https://flagcdn.com/w40/${jogo.selecao_A.nome.toLowerCase().replace(/\s/g, '-')}.png`,
+        flagBUrl: jogo.selecao_B.url_bandeira || `https://flagcdn.com/w40/${jogo.selecao_B.nome.toLowerCase().replace(/\s/g, '-')}.png`,
+        date: `${ano}-${mes}-${dia}`, // Agora enviamos a data estritamente local
+        time: `${horas}:${minutos}`,  // E o horário também
+        estadio: jogo.fase,
+        status: jogo.status,
+        placarA: jogo.gols_A_real,
+        placarB: jogo.gols_B_real
+      };
+    });
   }
 
   async findOne(id: number) {
