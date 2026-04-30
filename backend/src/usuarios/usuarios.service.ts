@@ -39,6 +39,7 @@ export class UsuariosService {
       email: createUsuarioDto.email,
       senha_hash: senhaCriptografada, // <- Salvamos o hash, e não a senha pura!
       is_global_admin: createUsuarioDto.is_global_admin,
+      avatar: createUsuarioDto.avatar,
       selecao_preferida: createUsuarioDto.id_selecao_preferida 
         ? { id: createUsuarioDto.id_selecao_preferida } 
         : undefined,

@@ -274,11 +274,12 @@
 
               <!-- Posição -->
               <td class="py-2">
-                <div class="flex items-center gap-1.5">
-                  @if (item.posicao <= 3) { <span class="text-lg">{{ getMedalha(item.posicao) }}</span>
-                    } @else {
+                <div class="flex items-center justify-center w-6">
+                  @if (item.posicao <= 3) {
+                    <img [src]="'/assets/medals/' + item.posicao + '.png'" alt="Medalha" class="w-6 h-6 object-contain hover:scale-110 transition-transform duration-300">
+                  } @else {
                     <span class="text-gray-600 font-medium text-sm">{{ item.posicao }}</span>
-                    }
+                  }
                 </div>
               </td>
 
@@ -457,11 +458,12 @@
 
               <!-- Posição -->
               <td class="py-2">
-                <div class="flex items-center gap-1.5">
-                  @if (item.posicao <= 3) { <span class="text-lg">{{ getMedalha(item.posicao) }}</span>
-                    } @else {
+                <div class="flex items-center justify-center w-6">
+                  @if (item.posicao <= 3) {
+                    <img [src]="'/assets/medals/' + item.posicao + '.png'" alt="Medalha" class="w-6 h-6 object-contain hover:scale-110 transition-transform duration-300">
+                  } @else {
                     <span class="text-gray-600 font-medium text-sm">{{ item.posicao }}</span>
-                    }
+                  }
                 </div>
               </td>
 
