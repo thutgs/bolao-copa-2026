@@ -24,4 +24,12 @@ export class BoloesService {
   criarBolao(dados: { nome: string; descricao?: string }): Observable<any> {
     return this.http.post<any>(this.API, dados);
   }
+
+  deletarBolao(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.API}/${id}`);
+  }
+
+  getRanking(bolaoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API}/bolao/ranking`, { params: { bolaoId: bolaoId.toString() } });
+  }
 }

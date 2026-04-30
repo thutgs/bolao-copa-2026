@@ -10,13 +10,13 @@
     (click)="mudarAba('proximos')"
     [ngClass]="{'text-[#4f39f6] border-b-2 border-[#4f39f6] font-bold': abaAtiva === 'proximos', 'text-gray-400 font-medium': abaAtiva !== 'proximos'}"
     class="px-8 py-4 transition flex items-center gap-2">
-    📅 Próximos Jogos
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> Próximos Jogos
   </button>
   <button 
     (click)="mudarAba('extrato')"
     [ngClass]="{'text-[#4f39f6] border-b-2 border-[#4f39f6] font-bold': abaAtiva === 'extrato', 'text-gray-400 font-medium': abaAtiva !== 'extrato'}"
     class="px-8 py-4 transition flex items-center gap-2">
-    📄 Meu Extrato
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg> Meu Extrato
   </button>
 </div>
 
@@ -25,7 +25,7 @@
 <section class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 mb-8">
   <div class="flex items-center justify-between mb-8">
     <h3 class="text-lg font-bold text-[#05060c] flex items-center gap-2">
-      <span class="text-[#4f39f6]"></span> Próximos Jogos
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trophy"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg> Próximos Jogos
     </h3>
     <span class="text-[10px] text-gray-400 uppercase font-black tracking-widest">Fuso horário: Brasília</span>
   </div>
@@ -51,7 +51,7 @@
             <!-- Placar com os Inputs e Informações (Fontes aumentadas) -->
             <div class="flex items-center justify-center gap-3 shrink-0">
               @if (podePalpitar(jogo)) {
-                <input type="number" min="0" (focus)="jogo.palpiteA = jogo.palpiteA ?? 0" [(ngModel)]="jogo.palpiteA" placeholder="-" class="w-16 h-12 bg-white border border-gray-200 rounded-xl text-center text-xl font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner">
+                <input type="number" min="0" (focus)="jogo.palpiteA = jogo.palpiteA ?? 0" [(ngModel)]="jogo.palpiteA" placeholder="-" class="w-16 h-12 bg-white border border-gray-200 rounded-xl text-center text-xl font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner score-input">
               } @else {
                 <div class="w-16 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-xl font-black text-gray-500 border border-gray-200">{{ jogo.palpiteA !== null ? jogo.palpiteA : '-' }}</div>
               }
@@ -65,7 +65,7 @@
               </div>
 
               @if (podePalpitar(jogo)) {
-                <input type="number" min="0" (focus)="jogo.palpiteB = jogo.palpiteB ?? 0" [(ngModel)]="jogo.palpiteB" placeholder="-" class="w-16 h-12 bg-white border border-gray-200 rounded-xl text-center text-xl font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner">
+                <input type="number" min="0" (focus)="jogo.palpiteB = jogo.palpiteB ?? 0" [(ngModel)]="jogo.palpiteB" placeholder="-" class="w-16 h-12 bg-white border border-gray-200 rounded-xl text-center text-xl font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner score-input">
               } @else {
                 <div class="w-16 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-xl font-black text-gray-500 border border-gray-200">{{ jogo.palpiteB !== null ? jogo.palpiteB : '-' }}</div>
               }
@@ -112,7 +112,7 @@
 <section class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
   <div class="flex items-center justify-between mb-6">
     <h3 class="text-lg font-bold text-[#05060c] flex items-center gap-2">
-      <span class="text-[#4f39f6]"></span> Meu Extrato
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg> Meu Extrato
     </h3>
   </div>
   <div class="max-h-[500px] overflow-y-auto pr-2">
@@ -184,9 +184,9 @@
                 <!-- Modo Edição -->
                 <div class="flex flex-col items-center justify-center gap-2">
                   <div class="flex items-center justify-center gap-2">
-                    <input type="number" min="0" (focus)="palpite.novoPalpiteA = palpite.novoPalpiteA ?? 0" [(ngModel)]="palpite.novoPalpiteA" class="w-12 h-8 text-center border border-[#4f39f6] rounded-md font-black text-sm outline-none bg-white shadow-inner">
+                    <input type="number" min="0" (focus)="palpite.novoPalpiteA = palpite.novoPalpiteA ?? 0" [(ngModel)]="palpite.novoPalpiteA" class="w-12 h-8 text-center border border-[#4f39f6] rounded-md font-black text-sm outline-none bg-white shadow-inner score-input">
                     <span class="text-xs text-gray-400">X</span>
-                    <input type="number" min="0" (focus)="palpite.novoPalpiteB = palpite.novoPalpiteB ?? 0" [(ngModel)]="palpite.novoPalpiteB" class="w-12 h-8 text-center border border-[#4f39f6] rounded-md font-black text-sm outline-none bg-white shadow-inner">
+                    <input type="number" min="0" (focus)="palpite.novoPalpiteB = palpite.novoPalpiteB ?? 0" [(ngModel)]="palpite.novoPalpiteB" class="w-12 h-8 text-center border border-[#4f39f6] rounded-md font-black text-sm outline-none bg-white shadow-inner score-input">
                   </div>
                   <div class="flex gap-2">
                     <button (click)="salvarEdicao(palpite)" class="text-[10px] bg-[#88E788]/20 text-green-700 px-3 py-1 rounded font-bold hover:bg-[#88E788]/40 transition-colors">Salvar</button>
