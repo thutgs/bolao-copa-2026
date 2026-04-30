@@ -87,7 +87,7 @@
             <path d="M17.5 17.5 16 16.25V14" />
             <circle cx="16" cy="16" r="6" />
           </svg>
-          <span>Jogos</span>
+          <span>Tabela</span>
         </a>
 
         <!-- O botão de Admin só será renderizado se a flag is_global_admin for true -->
@@ -115,20 +115,8 @@
         @if (currentUser()) {
         <div class="user-info">
           <div class="user-avatar">
-            @if (currentUser()?.avatar === 'feminino') {
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-              <path d="M12 14a4 4 0 0 1 4 4" />
-            </svg>
-            } @else {
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            }
+            <img [src]="currentUser()?.avatar === 'feminino' ? 'assets/avatars/female.svg' : 'assets/avatars/male.svg'"
+              alt="Avatar" class="w-full h-full object-cover">
           </div>
           <div class="user-details">
             <span class="user-name">{{ currentUser()?.nome || 'Usuário' }}</span>

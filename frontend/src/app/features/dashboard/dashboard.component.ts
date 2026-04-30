@@ -319,8 +319,8 @@ export class DashboardComponent implements OnInit {
   }
 
   verTodosJogos(): void {
-    // Navegar para tela de todos os jogos
-    this.router.navigate(['/jogos']);
+    // Navegar para tela de palpites
+    this.router.navigate(['/palpites']);
   }
 
   getMedalha(posicao: number): string {

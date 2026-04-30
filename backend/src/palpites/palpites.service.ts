@@ -65,6 +65,15 @@ export class PalpitesService {
     return palpite;
   }
 
+  // palpites.service.ts
+  async findMeusPalpites(usuarioId: number) {
+    return await this.palpiteRepository.find({
+      where: { usuario: { id: usuarioId } },
+      relations: ['jogo', 'jogo.selecao_A', 'jogo.selecao_B'], // Traz os dados do jogo junto
+      order: { id: 'DESC' } // Ordem do mais recente para o mais antigo
+    });
+  }
+
   async update(id: number, updatePalpiteDto: UpdatePalpiteDto, usuarioId: number) {
     const palpite = await this.findOne(id);
 

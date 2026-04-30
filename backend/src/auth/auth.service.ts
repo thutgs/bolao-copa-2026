@@ -30,7 +30,8 @@ export class AuthService {
       sub: usuario.id, 
       email: usuario.email, 
       nome: usuario.nome,
-      isAdmin: usuario.is_global_admin 
+      isAdmin: usuario.is_global_admin,
+      avatar: usuario.avatar 
     };
 
     // 4. Retorna o Token JWT

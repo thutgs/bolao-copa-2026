@@ -9,6 +9,7 @@ import { SelecoesModule } from './selecoes/selecoes.module';
 import { JogosModule } from './jogos/jogos.module';
 import { PalpitesModule } from './palpites/palpites.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule as AppConfigModule } from './config/config.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AuthModule } from './auth/auth.module';
     JogosModule,
     PalpitesModule,
     AuthModule,
+    AppConfigModule,
   ],
   controllers: [AppController],
   providers: [AppService],

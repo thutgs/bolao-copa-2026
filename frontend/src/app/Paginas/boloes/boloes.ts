@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core'; // <-- ADICIONADO AQUI
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -14,6 +14,7 @@ import { BoloesService } from '../../services/boloes.service';
 export class BoloesComponent implements OnInit {
   private boloesService = inject(BoloesService);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef); // <-- INJETADO AQUI
 
   listaDeBoloes: any[] = [];
   
@@ -41,7 +42,10 @@ export class BoloesComponent implements OnInit {
 
   carregarMeusBoloes() {
     this.boloesService.getMeusBoloes().subscribe({
-      next: (dados) => this.listaDeBoloes = dados,
+      next: (dados) => {
+        this.listaDeBoloes = dados;
+        this.cdr.detectChanges(); // <-- A MÁGICA ACONTECE AQUI
+      },
       error: (err) => console.error('Erro ao buscar bolões', err)
     });
   }

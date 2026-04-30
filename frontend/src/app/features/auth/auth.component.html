@@ -1,10 +1,53 @@
-<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#05060c]">
+<div class="min-h-screen flex flex-col items-center justify-start pt-6 pb-8 px-4 relative overflow-hidden bg-[#05060c]">
   <!-- Fundo com imagem de estádio/futebol -->
   <div class="absolute inset-0 z-0">
     <!-- Imagem em loop cover -->
     <img src="/assets/images/stadium-bg.jpg" alt="Stadium Background" class="absolute inset-0 w-full h-full object-cover">
     <!-- Overlay escuro para legibilidade -->
     <div class="absolute inset-0 bg-gradient-to-t from-[#05060c]/90 via-[#05060c]/50 to-[#05060c]/30"></div>
+  </div>
+
+  <!-- Contador Regressivo Copa do Mundo -->
+  <div class="relative z-10 w-full max-w-[520px] mb-6">
+    @if (!copaIniciada()) {
+      <div class="text-center">
+        <h2 class="text-white/90 text-sm font-bold tracking-widest uppercase mb-3">Até a Copa do Mundo</h2>
+        <div class="flex justify-center gap-2 sm:gap-3">
+          <!-- Dias -->
+          <div class="flex flex-col items-center">
+            <div class="bg-[#05060c]/90 border border-[#2d3139] rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 min-w-[56px] sm:min-w-[72px] shadow-lg">
+              <span class="text-[#f59e0b] text-xl sm:text-3xl font-bold font-mono tabular-nums">{{ countdown().dias | number:'2.0' }}</span>
+            </div>
+            <span class="text-white/60 text-[10px] sm:text-xs font-medium uppercase tracking-wider mt-1">Dias</span>
+          </div>
+          <!-- Horas -->
+          <div class="flex flex-col items-center">
+            <div class="bg-[#05060c]/90 border border-[#2d3139] rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 min-w-[56px] sm:min-w-[72px] shadow-lg">
+              <span class="text-[#f59e0b] text-xl sm:text-3xl font-bold font-mono tabular-nums">{{ countdown().horas | number:'2.0' }}</span>
+            </div>
+            <span class="text-white/60 text-[10px] sm:text-xs font-medium uppercase tracking-wider mt-1">Horas</span>
+          </div>
+          <!-- Minutos -->
+          <div class="flex flex-col items-center">
+            <div class="bg-[#05060c]/90 border border-[#2d3139] rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 min-w-[56px] sm:min-w-[72px] shadow-lg">
+              <span class="text-[#f59e0b] text-xl sm:text-3xl font-bold font-mono tabular-nums">{{ countdown().minutos | number:'2.0' }}</span>
+            </div>
+            <span class="text-white/60 text-[10px] sm:text-xs font-medium uppercase tracking-wider mt-1">Minutos</span>
+          </div>
+          <!-- Segundos -->
+          <div class="flex flex-col items-center">
+            <div class="bg-[#05060c]/90 border border-[#2d3139] rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 min-w-[56px] sm:min-w-[72px] shadow-lg">
+              <span class="text-[#f59e0b] text-xl sm:text-3xl font-bold font-mono tabular-nums">{{ countdown().segundos | number:'2.0' }}</span>
+            </div>
+            <span class="text-white/60 text-[10px] sm:text-xs font-medium uppercase tracking-wider mt-1">Segundos</span>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="text-center py-2">
+        <span class="text-[#CCFF00] text-lg sm:text-xl font-bold tracking-wider">A Copa começou!</span>
+      </div>
+    }
   </div>
 
   <!-- Card -->
@@ -281,31 +324,20 @@
             <button
               type="button"
               (click)="selecionarAvatar('masculino')"
-              class="flex-1 py-3 px-4 border rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-[#05060c] hover:border-[#532aab]/50 focus:outline-none focus:border-[#532aab] focus:ring-1 focus:ring-[#532aab]/50"
+              class="flex-1 py-2 px-4 border rounded-xl transition-all duration-200 flex flex-col items-center justify-center gap-1 bg-[#05060c] hover:border-[#532aab]/50 focus:outline-none focus:border-[#532aab] focus:ring-1 focus:ring-[#532aab]/50"
               [class.border-[#532aab]]="avatarSelecionado() === 'masculino'"
-              [class.border-[#2d3139]]="avatarSelecionado() !== 'masculino'"
-              [class.text-[#532aab]]="avatarSelecionado() === 'masculino'"
-              [class.text-white/40]="avatarSelecionado() !== 'masculino'">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-              <span class="text-[15px]">Masculino</span>
+              [class.border-[#2d3139]]="avatarSelecionado() !== 'masculino'">
+              <img src="assets/avatars/male.svg" alt="Masculino" class="w-8 h-8 rounded-full object-cover">
+              <span class="text-[13px]" [class.text-[#532aab]]="avatarSelecionado() === 'masculino'" [class.text-white/40]="avatarSelecionado() !== 'masculino'">Masculino</span>
             </button>
             <button
               type="button"
               (click)="selecionarAvatar('feminino')"
-              class="flex-1 py-3 px-4 border rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-[#05060c] hover:border-[#532aab]/50 focus:outline-none focus:border-[#532aab] focus:ring-1 focus:ring-[#532aab]/50"
+              class="flex-1 py-2 px-4 border rounded-xl transition-all duration-200 flex flex-col items-center justify-center gap-1 bg-[#05060c] hover:border-[#532aab]/50 focus:outline-none focus:border-[#532aab] focus:ring-1 focus:ring-[#532aab]/50"
               [class.border-[#532aab]]="avatarSelecionado() === 'feminino'"
-              [class.border-[#2d3139]]="avatarSelecionado() !== 'feminino'"
-              [class.text-[#532aab]]="avatarSelecionado() === 'feminino'"
-              [class.text-white/40]="avatarSelecionado() !== 'feminino'">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-                <path d="M12 14a4 4 0 0 1 4 4"/>
-              </svg>
-              <span class="text-[15px]">Feminino</span>
+              [class.border-[#2d3139]]="avatarSelecionado() !== 'feminino'">
+              <img src="assets/avatars/female.svg" alt="Feminino" class="w-8 h-8 rounded-full object-cover">
+              <span class="text-[13px]" [class.text-[#532aab]]="avatarSelecionado() === 'feminino'" [class.text-white/40]="avatarSelecionado() !== 'feminino'">Feminino</span>
             </button>
           </div>
         </div>
