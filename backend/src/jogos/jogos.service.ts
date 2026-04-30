@@ -286,4 +286,21 @@ export class JogosService {
       jogosGerados: jogosMataMata.length,
     };
   }
+
+  // Atualiza um jogo de mata-mata que estava com a vaga "em aberto"
+  async alocarTerceiro(jogoId: number, selecaoBId: number) {
+    const jogo = await this.jogoRepository.findOne({ where: { id: jogoId } });
+    
+    if (!jogo) {
+      throw new NotFoundException('Jogo não encontrado.');
+    }
+    if (jogo.selecao_B) {
+      throw new BadRequestException('Esta vaga já está preenchida.');
+    }
+
+    // Aloca a seleção na vaga B
+    jogo.selecao_B = { id: selecaoBId } as any;
+    
+    return this.jogoRepository.save(jogo);
+  }
 }

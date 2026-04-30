@@ -72,4 +72,12 @@ export class JogosController {
     }
     return this.jogosService.gerarDezesseisAvos();
   }
+
+  @Patch(':id/alocar')
+  alocarTerceiro(@Param('id') id: string, @Body('selecao_b_id') selecaoBId: number, @Request() req) {
+    if (!req.usuario.isAdmin) {
+      throw new ForbiddenException('Apenas administradores podem alocar vagas no mata-mata.');
+    }
+    return this.jogosService.alocarTerceiro(+id, selecaoBId);
+  }
 }
