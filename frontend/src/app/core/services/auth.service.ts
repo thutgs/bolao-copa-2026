@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, catchError, throwError } from 'rxjs';
+import { Observable, tap, catchError, throwError, switchMap } from 'rxjs';
 import { Usuario, LoginRequest, CadastroRequest } from '../models/usuario.model';
 
 interface LoginResponse {
@@ -72,7 +72,7 @@ export class AuthService {
     );
   }
 
-  cadastro(data: CadastroRequest): Observable<Usuario> {
+  cadastro(data: CadastroRequest): Observable<LoginResponse> {
     return this.http.post<Usuario>(`${this.API_URL}/usuarios`, {
       nome: data.nome,
       email: data.email,
@@ -80,9 +80,9 @@ export class AuthService {
       avatar: data.avatar,
       id_selecao_preferida: data.id_selecao_preferida
     }).pipe(
-      tap((user: Usuario) => {
-        // Após cadastro, fazer login automático
-        this.login({ email: data.email, senha: data.senha }).subscribe();
+      switchMap((user: Usuario) => {
+        // Após cadastro, fazer login automático e aguardar a conclusão
+        return this.login({ email: data.email, senha: data.senha });
       }),
       catchError((error: { error?: { message?: string } }) => {
         return throwError(() => new Error(error.error?.message || 'Erro ao criar conta'));

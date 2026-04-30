@@ -22,4 +22,7 @@ export class Usuario {
   @ManyToOne(() => Selecao, { nullable: true })
   @JoinColumn({ name: 'id_selecao_preferida' })
   selecao_preferida!: Selecao;
+
+  @Column({ nullable: true })
+  avatar!: string;
 }

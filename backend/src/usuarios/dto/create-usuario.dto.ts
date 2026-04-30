@@ -21,4 +21,8 @@ export class CreateUsuarioDto {
   @IsOptional()
   @IsInt({ message: 'O ID da seleção deve ser um número inteiro.' })
   id_selecao_preferida?: number;
+
+  @IsOptional()
+  @IsString({ message: 'O avatar deve ser um texto válido.' })
+  avatar?: string;
 }

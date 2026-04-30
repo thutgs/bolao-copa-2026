@@ -9,7 +9,6 @@ import { SelecoesModule } from './selecoes/selecoes.module';
 import { JogosModule } from './jogos/jogos.module';
 import { PalpitesModule } from './palpites/palpites.module';
 import { AuthModule } from './auth/auth.module';
-import { PostgresDriver } from 'typeorm/browser/platform/BrowserDisabledDriversDummy.js';
 
 @Module({
   imports: [
@@ -20,11 +19,11 @@ import { PostgresDriver } from 'typeorm/browser/platform/BrowserDisabledDriversD
     // 2. Configura o TypeORM com o PostgreSQL
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5433, 
-      username: 'postgres',
-      password: '',
-      database:'bolao_copa_2026',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      username: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASS || 'postgres',
+      database: process.env.DB_NAME || 'bolao_db',
       autoLoadEntities: true,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // APENAS PARA DESENVOLVIMENTO: cria as tabelas automaticamente
