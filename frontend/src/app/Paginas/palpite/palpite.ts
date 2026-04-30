@@ -16,11 +16,13 @@ export class PalpiteComponent implements OnInit {
   meuExtrato: any[] = [];
   abaAtiva: 'proximos' | 'extrato' = 'proximos';
   carregandoJogos = false;
+  todosOsJogos: any[] = [];
+  jogosComPalpite: Set<number> = new Set(); // Guarda os IDs dos jogos já palpitados
 
   ngOnInit(): void {
-    // Subscreve ao observable de jogos para carregar dados do cache instantaneamente
     this.palpiteService.games$.subscribe(dados => {
       if (dados && dados.length > 0) {
+        this.todosOsJogos = dados; // <-- ADICIONE ESTA LINHA
         this.mapearJogos(dados);
         this.carregandoJogos = false;
       }
@@ -42,9 +44,13 @@ export class PalpiteComponent implements OnInit {
     try {
       if (!dados || !Array.isArray(dados)) return;
       
+      
       this.listaDeJogos = dados.map(jogo => {
         try {
           const dataHora = jogo.data_hora_inicio ? new Date(jogo.data_hora_inicio) : new Date();
+          const dataFormatada = dataHora.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).toUpperCase();
+          const horaFormatada = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
           return {
             id: jogo.id,
             timeA: jogo.selecao_A?.nome || 'A definir',
@@ -53,7 +59,7 @@ export class PalpiteComponent implements OnInit {
             timeB: jogo.selecao_B?.nome || 'A definir',
             siglaB: jogo.selecao_B?.nome?.substring(0, 3).toUpperCase() || 'XXX',
             bandeiraB: jogo.selecao_B?.url_bandeira || 'https://via.placeholder.com/60',
-            data: dataHora.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).toUpperCase(),
+            data: `${dataFormatada} • ${horaFormatada}`,
             data_hora_inicio: dataHora,
             grupo: jogo.fase || 'Grupo',
             palpiteA: null,
@@ -64,6 +70,9 @@ export class PalpiteComponent implements OnInit {
           return null;
         }
       }).filter(j => j !== null);
+
+      // Limpa os jogos que já tem palpite
+      this.filtrarJogos();
     } catch (error) {
       console.error('Erro crítico no mapeamento de jogos:', error);
     }
@@ -72,25 +81,51 @@ export class PalpiteComponent implements OnInit {
   carregarExtrato() {
     this.palpiteService.getPalpites().subscribe({
       next: (dados) => {
-        this.meuExtrato = dados.map(palpite => ({
-          id: palpite.id,
-          jogo: palpite.jogo,
-          data: new Date(palpite.jogo?.data_hora_inicio).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).toUpperCase(),
-          timeA: palpite.jogo?.selecao_A?.nome,
-          timeB: palpite.jogo?.selecao_B?.nome,
-          siglaA: palpite.jogo?.selecao_A?.nome?.substring(0, 3).toUpperCase(),
-          siglaB: palpite.jogo?.selecao_B?.nome?.substring(0, 3).toUpperCase(),
-          bandeiraA: palpite.jogo?.selecao_A?.url_bandeira,
-          bandeiraB: palpite.jogo?.selecao_B?.url_bandeira,
-          golsAReal: palpite.jogo?.gols_A_real,
-          golsBReal: palpite.jogo?.gols_B_real,
-          palpiteA: palpite.gols_A_palpite,
-          palpiteB: palpite.gols_B_palpite,
-          pontos: palpite.pontos_obtidos
-        }));
+        this.jogosComPalpite = new Set(dados.map(p => p.jogo?.id));
+
+        this.meuExtrato = dados.map(palpite => {
+          const jogoCompleto = this.todosOsJogos.find(j => j.id === palpite.jogo?.id);
+          const selecaoA = jogoCompleto?.selecao_A || palpite.jogo?.selecao_A;
+          const selecaoB = jogoCompleto?.selecao_B || palpite.jogo?.selecao_B;
+          const dataJogo = jogoCompleto?.data_hora_inicio || palpite.jogo?.data_hora_inicio;
+          
+          // NOVA LÓGICA: Verifica se o jogo é no futuro
+          const isPendente = dataJogo ? new Date(dataJogo) > new Date() : false;
+
+          return {
+            id: palpite.id,
+            jogo: palpite.jogo,
+            data: dataJogo ? new Date(dataJogo).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).toUpperCase() + ' • ' + new Date(dataJogo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '',
+            timeA: selecaoA?.nome || 'A definir',
+            timeB: selecaoB?.nome || 'A definir',
+            siglaA: selecaoA?.nome?.substring(0, 3).toUpperCase() || 'XXX',
+            siglaB: selecaoB?.nome?.substring(0, 3).toUpperCase() || 'XXX',
+            bandeiraA: selecaoA?.url_bandeira || 'https://via.placeholder.com/60',
+            bandeiraB: selecaoB?.url_bandeira || 'https://via.placeholder.com/60',
+            golsAReal: jogoCompleto?.gols_A_real !== undefined ? jogoCompleto?.gols_A_real : palpite.jogo?.gols_A_real,
+            golsBReal: jogoCompleto?.gols_B_real !== undefined ? jogoCompleto?.gols_B_real : palpite.jogo?.gols_B_real,
+            palpiteA: palpite.gols_A_palpite,
+            palpiteB: palpite.gols_B_palpite,
+            pontos: palpite.pontos_obtidos,
+            // NOVAS VARIÁVEIS PARA A EDIÇÃO:
+            isPendente: isPendente,
+            editando: false, 
+            novoPalpiteA: palpite.gols_A_palpite,
+            novoPalpiteB: palpite.gols_B_palpite
+          };
+        });
+
+        this.filtrarJogos();
       },
       error: (err) => console.error('Erro ao carregar extrato:', err)
     });
+  }
+
+  filtrarJogos() {
+    if (this.listaDeJogos && this.jogosComPalpite) {
+      // Deixa na lista apenas os jogos cujo ID NÃO está na lista de palpitados
+      this.listaDeJogos = this.listaDeJogos.filter(jogo => !this.jogosComPalpite.has(jogo.id));
+    }
   }
 
   salvarPalpite(jogo: any) {
@@ -101,14 +136,15 @@ export class PalpiteComponent implements OnInit {
     
     const palpiteDto = {
       jogo_id: jogo.id,
-      gols_A: Number(jogo.palpiteA),
-      gols_B: Number(jogo.palpiteB)
+      gols_A_palpite: Number(jogo.palpiteA),
+      gols_B_palpite: Number(jogo.palpiteB)
     };
 
     this.palpiteService.salvarPalpite(palpiteDto).subscribe({
       next: () => {
         alert('Palpite salvo com sucesso!');
-        this.carregarExtrato(); // Atualiza a lista
+        // Recarregar o extrato fará com que o novo jogo seja adicionado lá e ocultado daqui automaticamente
+        this.carregarExtrato(); 
       },
       error: (err) => {
         alert('Erro ao salvar palpite. Verifique se você já palpitou neste jogo.');
@@ -123,5 +159,25 @@ export class PalpiteComponent implements OnInit {
 
   mudarAba(aba: 'proximos' | 'extrato') {
     this.abaAtiva = aba;
+  }
+
+  salvarEdicao(palpite: any) {
+    const palpiteDto = {
+      gols_A_palpite: Number(palpite.novoPalpiteA),
+      gols_B_palpite: Number(palpite.novoPalpiteB)
+    };
+
+    this.palpiteService.atualizarPalpite(palpite.id, palpiteDto).subscribe({
+      next: () => {
+        // Atualiza a tela com os novos valores e fecha a edição
+        palpite.palpiteA = palpite.novoPalpiteA;
+        palpite.palpiteB = palpite.novoPalpiteB;
+        palpite.editando = false;
+      },
+      error: (err) => {
+        alert('Erro ao atualizar palpite. Verifique o servidor.');
+        console.error('Erro na edição:', err);
+      }
+    });
   }
 }

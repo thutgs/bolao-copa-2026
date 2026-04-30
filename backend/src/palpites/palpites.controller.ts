@@ -20,10 +20,19 @@ export class PalpitesController {
     return this.palpitesService.findAll();
   }
 
+
+  // palpites.controller.ts
+  @UseGuards(AuthGuard)
+  @Get('meus')
+  findMeusPalpites(@Request() req) {
+    return this.palpitesService.findMeusPalpites(req.usuario.sub); 
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.palpitesService.findOne(+id);
   }
+
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePalpiteDto: UpdatePalpiteDto, @Request() req) {
