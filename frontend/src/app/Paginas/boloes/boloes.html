@@ -1,0 +1,184 @@
+<header class="flex justify-between items-start mb-8">
+  <div>
+    <h2 class="text-3xl font-black text-[#05060c]">Central de Bolões</h2>
+    <p class="text-sm text-gray-500 font-medium">Entre em um bolão com código de convite ou crie o seu próprio.</p>
+  </div>
+  <div class="flex gap-4">
+    <div class="bg-white border border-gray-200 px-4 py-2.5 rounded-xl flex items-center gap-3 shadow-sm cursor-pointer hover:bg-gray-50 transition min-w-[200px] justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-gray-400">👥</span>
+        <span class="text-sm font-bold text-gray-700">Meus Bolões</span>
+      </div>
+      <span class="text-gray-400 text-xs">▼</span>
+    </div>
+  </div>
+</header>
+
+<section class="grid grid-cols-2 gap-8 mb-10 relative">
+  <!-- "ou" badge -->
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-gray-50 border border-gray-200 rounded-full flex items-center justify-center text-xs font-bold text-gray-400 z-10">ou</div>
+
+  <!-- Left Card (Entrar) -->
+  <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex flex-col justify-center relative overflow-hidden">
+    <h3 class="text-lg font-black text-[#05060c] mb-1">Entrar em um Bolão</h3>
+    <p class="text-xs text-gray-500 font-medium mb-6">Digite o código de convite que você recebeu para participar de um bolão.</p>
+    
+    <div class="flex gap-3 mb-4">
+      <div class="flex-1 bg-white border-2 border-[#4f39f6]/20 focus-within:border-[#4f39f6] rounded-xl flex items-center px-4 transition-all overflow-hidden shadow-inner">
+        <span class="text-gray-400 font-black text-lg mr-2">#</span>
+        <input type="text" [(ngModel)]="codigoBusca" placeholder="HEXA26" class="w-full py-3 outline-none font-black text-gray-700 uppercase tracking-wider text-sm bg-transparent">
+      </div>
+      <button (click)="buscarBolao()" class="bg-[#4f39f6] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#3d2bd1] transition shadow-md whitespace-nowrap">
+        Buscar Bolão
+      </button>
+    </div>
+
+    <div class="bg-[#4f39f6]/5 border border-[#4f39f6]/10 p-4 rounded-xl flex items-start gap-3">
+      <span class="text-[#4f39f6] text-lg mt-0.5">ℹ️</span>
+      <div>
+        <p class="text-[11px] font-bold text-[#4f39f6] mb-0.5">O link de convite funciona assim:</p>
+        <p class="text-[11px] text-[#4f39f6]/70 font-mono break-all">bolao-copa.com/boloes?codigo=HEXA26</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Card (Criar) -->
+  <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
+    <div class="w-1/2 pr-4">
+      <h3 class="text-lg font-black text-[#05060c] mb-1">Criar Novo Bolão</h3>
+      <p class="text-xs text-gray-500 font-medium mb-6">Crie seu próprio bolão e convide seus amigos para participar.</p>
+      
+      <button (click)="abrirModalCriar()" class="border-2 border-green-500 text-green-600 px-6 py-3 rounded-xl font-bold text-sm hover:bg-green-50 transition flex items-center gap-2">
+        <span class="text-lg">+</span> Criar Novo Bolão
+      </button>
+    </div>
+    <div class="w-1/2 h-full relative flex items-center justify-center">
+      <span class="text-8xl">🏆</span>
+    </div>
+  </div>
+</section>
+
+<div class="flex items-center justify-between mb-6">
+  <h3 class="text-xl font-black text-[#05060c]">Meus Bolões ({{listaDeBoloes.length}})</h3>
+  <div class="flex items-center gap-2">
+    <span class="text-xs text-gray-400 font-bold">Ordenar por:</span>
+    <select class="bg-white border border-gray-200 text-sm font-bold text-gray-700 rounded-lg px-3 py-1.5 outline-none cursor-pointer">
+      <option>Mais Recentes</option>
+      <option>Meus Pontos</option>
+      <option>Participantes</option>
+    </select>
+  </div>
+</div>
+
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  @for (bolao of listaDeBoloes; track bolao.id) {
+    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative group flex flex-col h-full">
+      @if (bolao.isAdmin || $index === 0) {
+        <div class="absolute top-0 left-6 bg-green-100 text-green-700 text-[8px] font-black uppercase px-2 py-1 rounded-b-md">Admin</div>
+      }
+      <div class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer">
+        ⋮
+      </div>
+      
+      <div class="flex items-center gap-4 mb-6 mt-4">
+        <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 text-2xl shadow-sm">
+          {{ bolao.emoji || '⚽' }}
+        </div>
+        <div>
+          <h4 class="font-black text-gray-900 text-md leading-tight mb-1">{{ bolao.nome }}</h4>
+          <p class="text-[9px] text-gray-400 font-medium">Criado em 01/06/2026</p>
+          <p class="text-[10px] text-gray-500 font-bold mt-1 flex items-center gap-1">
+            <span>👥</span> {{ bolao.participantes || 1 }} participantes
+          </p>
+        </div>
+      </div>
+
+      @if (bolao.isAdmin || $index === 0) {
+        <div class="mb-6">
+          <p class="text-[10px] text-gray-400 font-bold mb-1">Código do Bolão</p>
+          <div class="bg-green-50/50 border border-green-100 rounded-xl p-2 flex items-center justify-between">
+            <span class="font-black text-green-700 text-sm tracking-widest ml-2">{{ bolao.codigo_convite || 'HEXA26' }}</span>
+            <button (click)="copiarCodigo(bolao.codigo_convite)" class="w-8 h-8 bg-white border border-green-200 rounded-lg text-green-600 flex items-center justify-center hover:bg-green-50 transition shadow-sm">
+              📋
+            </button>
+          </div>
+          <p class="text-[8px] text-gray-400 mt-1 text-center">Compartilhe este código para convidar amigos</p>
+        </div>
+        
+        <div class="flex gap-2 mt-auto">
+          <button (click)="compartilharWhatsApp(bolao.codigo_convite)" class="flex-1 bg-green-600 text-white py-2.5 rounded-xl font-bold text-[11px] hover:bg-green-700 transition flex items-center justify-center gap-1">
+            <span>💬</span> Compartilhar
+          </button>
+          <button class="flex-1 bg-white border-2 border-gray-100 text-gray-600 py-2.5 rounded-xl font-bold text-[11px] hover:bg-gray-50 transition flex items-center justify-center gap-1">
+            <span>⚙️</span> Gerenciar
+          </button>
+        </div>
+      } @else {
+        <div class="text-center mb-6 mt-2">
+          <p class="text-[10px] text-gray-400 font-bold mb-1">Sua Posição</p>
+          <p class="font-black text-xl text-gray-900 mb-1">{{ bolao.posicao || '3º' }} lugar</p>
+          <p class="text-sm font-black text-gray-600">{{ bolao.pontos || '128' }} pts</p>
+        </div>
+        
+        <button class="w-full mt-auto bg-[#4f39f6] text-white py-3 rounded-xl font-bold text-xs hover:bg-[#3d2bd1] transition shadow-md">
+          Ver Ranking
+        </button>
+      }
+    </div>
+  } @empty {
+    <div class="col-span-full bg-white rounded-3xl p-12 text-center border border-gray-100 border-dashed">
+      <div class="text-4xl mb-4">🏆</div>
+      <h3 class="text-xl font-black text-[#05060c] mb-2">Nenhum bolão encontrado</h3>
+      <p class="text-gray-400 mb-6 max-w-md mx-auto">Você ainda não participa de nenhum bolão. Crie o seu ou entre usando um código!</p>
+    </div>
+  }
+</section>
+
+<!-- Modal Confirmar Entrada -->
+@if (mostrarModalConfirmar) {
+<div class="fixed inset-0 bg-[#0b0e14]/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl relative">
+    <button (click)="fecharModalConfirmar()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">✕</button>
+    
+    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+      👥
+    </div>
+    
+    <h3 class="text-xl font-black text-[#05060c] mb-2 text-center">Entrar no bolão</h3>
+    <p class="text-sm text-gray-500 mb-2 text-center">Deseja entrar no bolão</p>
+    <p class="text-lg font-black text-green-600 mb-4 text-center">"{{ bolaoEncontrado?.nome }}" ?</p>
+    <p class="text-[11px] text-gray-400 text-center mb-8 px-4 leading-relaxed">Você terá acesso aos palpites, ranking e poderá competir com os demais participantes.</p>
+    
+    <div class="flex gap-3">
+      <button (click)="fecharModalConfirmar()" class="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition text-sm">Cancelar</button>
+      <button (click)="entrarNoBolao()" class="flex-1 bg-[#4f39f6] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-[#3d2bd1] transition shadow-md">Entrar no Bolão</button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal Criar Bolão -->
+@if (mostrarModalCriar) {
+<div class="fixed inset-0 bg-[#0b0e14]/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl relative">
+    <button (click)="fecharModalCriar()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">✕</button>
+    
+    <div class="w-16 h-16 bg-[#4f39f6]/10 text-[#4f39f6] rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+      🏆
+    </div>
+    
+    <h3 class="text-xl font-black text-[#05060c] mb-2 text-center">Criar Novo Bolão</h3>
+    <p class="text-[11px] text-gray-400 text-center mb-8 px-8 leading-relaxed">Dê um nome para o seu bolão e comece a convidar seus amigos!</p>
+    
+    <div class="mb-8">
+      <label class="block text-xs font-bold text-gray-700 mb-2">Nome do Bolão</label>
+      <input type="text" [(ngModel)]="novoBolaoNome" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-bold focus:border-[#4f39f6] outline-none transition text-gray-800" placeholder="Ex: Bolão da Firma, Família Cup, Resenha FC...">
+    </div>
+
+    <div class="flex gap-3">
+      <button (click)="fecharModalCriar()" class="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition text-sm">Cancelar</button>
+      <button (click)="criarBolao()" class="flex-1 bg-[#4f39f6] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-[#3d2bd1] transition shadow-md">Criar Bolão</button>
+    </div>
+  </div>
+</div>
+}
