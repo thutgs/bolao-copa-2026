@@ -24,8 +24,9 @@ export class BoloesController {
   }
 
   @Get()
-  findAll() {
-    return this.boloesService.findAll();
+  findAll(@Request() req) {
+    const usuarioId = req.usuario.sub;
+    return this.boloesService.findAllByUser(usuarioId);
   }
 
   @Get(':id')
