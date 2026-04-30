@@ -47,6 +47,7 @@ interface Usuario {
   nome: string;
   pontos: number;
   posicao: number;
+  posicaoAnterior?: number;
   acertosExatos: number;
   avatar?: 'masculino' | 'feminino';
   acertosTendencia: number;
@@ -79,6 +80,8 @@ export class DashboardComponent implements OnInit {
   boloes = signal<Bolao[]>([]);
   isLoading = signal(true);
   mostrarRankingModal = signal(false);
+  selectedDate = signal<Date>(new Date());
+  todosJogos = signal<Jogo[]>([]);
 
   // Computed values
   saudacao = computed(() => {
@@ -135,6 +138,16 @@ export class DashboardComponent implements OnInit {
     return this.jogos().some(j => j.status === 'futuro');
   });
 
+  jogosDoDia = computed(() => {
+    const dataSelecionada = this.selectedDate();
+    const anoStr = dataSelecionada.getFullYear().toString();
+    const mesStr = (dataSelecionada.getMonth() + 1).toString().padStart(2, '0');
+    const diaStr = dataSelecionada.getDate().toString().padStart(2, '0');
+    const dataFormatada = `${anoStr}-${mesStr}-${diaStr}`; // 'YYYY-MM-DD'
+
+    return this.todosJogos().filter(j => j.data === dataFormatada);
+  });
+
   ngOnInit(): void {
     this.carregarDados();
   }
@@ -160,12 +173,20 @@ export class DashboardComponent implements OnInit {
         }
       }
 
-      // 2º PASSO: AGORA SIM! Com o ID correto (3) no signal, buscamos o resto
-      await Promise.all([
+      // 2º PASSO: Com o ID correto no signal, buscamos o resto
+      const promises: Promise<void>[] = [
         this.carregarJogos(),
-        this.carregarRanking(),
         this.carregarUsuario()
-      ]);
+      ];
+
+      // Só busca ranking se o usuário participa de pelo menos 1 bolão
+      if (listaBoloes.length > 0) {
+        promises.push(this.carregarRanking());
+      } else {
+        this.ranking.set([]);
+      }
+
+      await Promise.all(promises);
 
     } catch (error) {
       console.error('Erro no carregamento do dashboard:', error);
@@ -197,24 +218,48 @@ export class DashboardComponent implements OnInit {
 
   carregarJogos(): Promise<void> {
     return new Promise((resolve) => {
-      this.matchesService.getNextMatches(4).subscribe({
+      this.http.get<any[]>(`${this.API_URL}/jogos`).subscribe({
         next: (jogos) => {
-          const jogosMapeados = jogos.map(jogo => ({
-            ...jogo,
-            selecaoA: jogo.teamA,
-            selecaoB: jogo.teamB,
-            bandeiraA: jogo.flagAUrl,
-            bandeiraB: jogo.flagBUrl,
-            data: jogo.date,
-            hora: jogo.time,
-            status: jogo.status === 'pendente' ? 'futuro' as const : jogo.status === 'finalizado' ? 'finalizado' as const : 'iniciado' as const
-          }));
-          this.jogos.set(jogosMapeados);
+          const jogosMapeados = jogos.map(jogo => {
+            const d = new Date(jogo.data_hora_inicio);
+            const ano = d.getFullYear();
+            const mes = String(d.getMonth() + 1).padStart(2, '0');
+            const dia = String(d.getDate()).padStart(2, '0');
+            const horas = String(d.getHours()).padStart(2, '0');
+            const minutos = String(d.getMinutes()).padStart(2, '0');
+
+            return {
+              id: jogo.id,
+              teamA: jogo.selecao_A?.nome || 'A Definir',
+              teamB: jogo.selecao_B?.nome || 'A Definir',
+              flagAUrl: jogo.selecao_A?.url_bandeira || `https://flagcdn.com/w40/${(jogo.selecao_A?.nome || 'unknown').toLowerCase().replace(/\s/g, '-')}.png`,
+              flagBUrl: jogo.selecao_B?.url_bandeira || `https://flagcdn.com/w40/${(jogo.selecao_B?.nome || 'unknown').toLowerCase().replace(/\s/g, '-')}.png`,
+              date: `${ano}-${mes}-${dia}`,
+              time: `${horas}:${minutos}`,
+              estadio: jogo.fase,
+              status: jogo.status === 'pendente' ? 'futuro' : jogo.status === 'finalizado' ? 'finalizado' : 'iniciado',
+              placarA: jogo.gols_A_real,
+              placarB: jogo.gols_B_real,
+              selecaoA: jogo.selecao_A?.nome || 'A Definir',
+              selecaoB: jogo.selecao_B?.nome || 'A Definir',
+              bandeiraA: jogo.selecao_A?.url_bandeira || '',
+              bandeiraB: jogo.selecao_B?.url_bandeira || '',
+              data: `${ano}-${mes}-${dia}`,
+              hora: `${horas}:${minutos}`
+            };
+          });
+
+          this.todosJogos.set(jogosMapeados as Jogo[]);
+          
+          const proximos = jogosMapeados.filter(j => j.status === 'futuro' || j.status === 'iniciado').slice(0, 4);
+          this.jogos.set(proximos as Jogo[]);
+
           resolve();
         },
         error: (error) => {
           console.error('Erro ao carregar jogos:', error);
           this.jogos.set([]);
+          this.todosJogos.set([]);
           resolve();
         }
       });
@@ -270,7 +315,7 @@ export class DashboardComponent implements OnInit {
 
   fazerPalpite(jogoId: number): void {
     // Navegar para tela de palpites
-    this.router.navigate(['/palpites', jogoId]);
+    this.router.navigate(['/palpites']);
   }
 
   verTodosJogos(): void {
@@ -367,7 +412,28 @@ export class DashboardComponent implements OnInit {
       'Gales': 'WAL',
       'Dinamarca': 'DEN'
     };
-    return siglas[nome] || nome.substring(0, 3).toUpperCase();
+    return siglas[nome] || (nome ? nome.substring(0, 3).toUpperCase() : '???');
+  }
+
+  formatarDataCabecalho(data: Date): string {
+    const meses = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = meses[data.getMonth()];
+    return `${dia} ${mes}`;
+  }
+
+  previousDay(): void {
+    const currentDate = this.selectedDate();
+    const prevDate = new Date(currentDate);
+    prevDate.setDate(currentDate.getDate() - 1);
+    this.selectedDate.set(prevDate);
+  }
+
+  nextDay(): void {
+    const currentDate = this.selectedDate();
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(currentDate.getDate() + 1);
+    this.selectedDate.set(nextDate);
   }
 
   logout(): void {
