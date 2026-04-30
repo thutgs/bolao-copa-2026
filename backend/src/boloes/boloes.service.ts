@@ -66,9 +66,31 @@ export class BoloesService {
     }
   }
 
-  async findAll() {
+  async findAllByUser(usuarioId: number) {
     try {
-      return await this.bolaoRepository.find({ relations: ['criador'] });
+      // Retorna apenas bolões onde o usuário é participante (criou ou entrou via código)
+      const boloes = await this.dataSource.query(`
+        SELECT 
+          b.id,
+          b.nome,
+          b.descricao,
+          b.codigo_convite,
+          b.criador_id,
+          (SELECT COUNT(*) FROM usuarios_boloes ub2 WHERE ub2.bolao_id = b.id) as participantes
+        FROM boloes b
+        INNER JOIN usuarios_boloes ub ON ub.bolao_id = b.id
+        WHERE ub.usuario_id = $1
+        ORDER BY b.id DESC
+      `, [usuarioId]);
+
+      return boloes.map((b: any) => ({
+        id: b.id,
+        nome: b.nome,
+        descricao: b.descricao,
+        codigo_convite: b.codigo_convite,
+        criador_id: b.criador_id,
+        participantes: Number(b.participantes),
+      }));
     } catch (error) {
       throw new InternalServerErrorException('Erro ao buscar a lista de bolões.');
     }
@@ -198,6 +220,18 @@ export class BoloesService {
 
   async getRanking(bolaoId: number, usuarioLogadoId: number) {
     await this.findOne(bolaoId); 
+
+    // Verifica se o usuário logado participa deste bolão
+    const participa = await this.usuarioBolaoRepository.findOne({
+      where: {
+        usuario: { id: usuarioLogadoId },
+        bolao: { id: bolaoId },
+      },
+    });
+
+    if (!participa) {
+      throw new ForbiddenException('Você não participa deste bolão.');
+    }
 
     // Atualizamos a query para contar o total de palpites e os acertos exatos (3 pontos)
     const rankingRaw = await this.dataSource.query(`
