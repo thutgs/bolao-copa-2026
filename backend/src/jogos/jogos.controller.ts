@@ -23,6 +23,11 @@ export class JogosController {
     return this.jogosService.findAll();
   }
 
+  @Get('next')
+  getNextMatches() {
+    return this.jogosService.getNextMatches(4);
+  }
+
   @Get('classificacao/grupos')
   getClassificacao() {
     return this.jogosService.getClassificacaoGrupos();

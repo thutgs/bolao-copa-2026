@@ -1,19 +1,20 @@
 import { Routes } from '@angular/router';
-import { ShellLayoutComponent } from '../layout/shell-layout/shell-layout.component';
-// Importe seus outros componentes aqui: TabelaComponent, AdminComponent...
-import { TabelaComponent } from './pages/tabela/tabela';
-import { AdminComponent } from './pages/admin/admin';
+import { AuthComponent } from './features/auth/auth.component';
+import { ShellLayoutComponent } from './shared/shell-layout/shell-layout.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { PalpitesComponent } from './features/palpites/palpites.component';
 
 export const routes: Routes = [
-  // Rota principal que carrega o menu
+  { path: '', redirectTo: '/auth', pathMatch: 'full' },
+  { path: 'auth', component: AuthComponent },
   {
     path: '',
     component: ShellLayoutComponent,
     children: [
-      { path: '', redirectTo: 'tabela', pathMatch: 'full' },
-      { path: 'tabela', component: TabelaComponent }, // Sua tabela
-      { path: 'admin', component: AdminComponent },   // Seu admin
-      // Adicione as outras rotas aqui depois (Dashboard, Ranking, etc)
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'palpites/:jogoId', component: PalpitesComponent },
+      { path: 'ranking', component: DashboardComponent },
+      { path: 'jogos', component: DashboardComponent }
     ]
   }
 ];
