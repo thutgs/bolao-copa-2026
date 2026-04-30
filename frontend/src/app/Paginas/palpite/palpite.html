@@ -1,0 +1,155 @@
+<header class="flex justify-between items-start mb-8">
+  <div>
+    <h2 class="text-3xl font-black text-[#05060c]">Palpites</h2>
+    <p class="text-sm text-gray-500">Dê seus palpites e acompanhe seus resultados!</p>
+  </div>
+  <div class="bg-white border border-gray-200 px-4 py-2 rounded-xl flex items-center gap-3 shadow-sm">
+    <span class="text-xs font-bold text-gray-400">Bolão Oficial Copa 2026</span>
+  </div>
+</header>
+
+<div class="flex gap-1 border-b border-gray-200 mb-8">
+  <button 
+    (click)="mudarAba('proximos')"
+    [ngClass]="{'text-[#4f39f6] border-b-2 border-[#4f39f6] font-bold': abaAtiva === 'proximos', 'text-gray-400 font-medium': abaAtiva !== 'proximos'}"
+    class="px-8 py-4 transition flex items-center gap-2">
+    📅 Próximos Jogos
+  </button>
+  <button 
+    (click)="mudarAba('extrato')"
+    [ngClass]="{'text-[#4f39f6] border-b-2 border-[#4f39f6] font-bold': abaAtiva === 'extrato', 'text-gray-400 font-medium': abaAtiva !== 'extrato'}"
+    class="px-8 py-4 transition flex items-center gap-2">
+    📄 Meu Extrato
+  </button>
+</div>
+
+<section class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 mb-8">
+  <div class="flex items-center justify-between mb-8">
+    <h3 class="text-lg font-bold text-[#05060c] flex items-center gap-2">
+      <span class="text-[#4f39f6]">🕒</span> Próximos Jogos
+    </h3>
+    <span class="text-[10px] text-gray-400 uppercase font-black tracking-widest">Fuso horário: Brasília ▼</span>
+  </div>
+
+  <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+    @for (jogo of listaDeJogos; track jogo.id) {
+      <div class="flex items-center justify-between py-4 border border-gray-100 rounded-2xl px-6 shadow-sm group">
+          <div class="flex items-center gap-4 w-1/3">
+            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100 shadow-sm overflow-hidden">
+               <img [src]="jogo.bandeiraA" class="w-full h-full object-cover" alt="Bandeira">
+            </div>
+            <div>
+              <p class="font-black text-gray-900 text-sm leading-tight">{{ jogo.timeA }}</p>
+              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ jogo.siglaA }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 justify-center w-1/3">
+            @if (podePalpitar(jogo)) {
+              <input type="number" [(ngModel)]="jogo.palpiteA" placeholder="-" class="w-16 h-10 bg-white border border-gray-200 rounded-lg text-center text-lg font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner">
+            } @else {
+              <div class="w-16 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-lg font-black text-gray-500 border border-gray-200">{{ jogo.palpiteA !== null ? jogo.palpiteA : '-' }}</div>
+            }
+            <div class="text-center px-2">
+              <span class="text-[9px] text-[#4f39f6] font-bold block mb-1 whitespace-nowrap">{{ jogo.data }}</span>
+              <span class="text-gray-300 font-black text-sm">X</span>
+              <p class="text-[8px] text-gray-400 mt-1 font-bold uppercase">{{ jogo.grupo }}</p>
+            </div>
+            @if (podePalpitar(jogo)) {
+              <input type="number" [(ngModel)]="jogo.palpiteB" placeholder="-" class="w-16 h-10 bg-white border border-gray-200 rounded-lg text-center text-lg font-black text-[#05060c] focus:border-[#4f39f6] outline-none transition-all shadow-inner">
+            } @else {
+              <div class="w-16 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-lg font-black text-gray-500 border border-gray-200">{{ jogo.palpiteB !== null ? jogo.palpiteB : '-' }}</div>
+            }
+          </div>
+
+          <div class="flex items-center justify-end gap-4 w-1/3">
+            <div class="text-right">
+              <p class="font-black text-gray-900 text-sm leading-tight">{{ jogo.timeB }}</p>
+              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{ jogo.siglaB }}</p>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100 shadow-sm overflow-hidden">
+                <img [src]="jogo.bandeiraB" class="w-full h-full object-cover" alt="Bandeira">
+            </div>
+            @if (podePalpitar(jogo)) {
+              <button (click)="salvarPalpite(jogo)" class="ml-4 bg-[#4f39f6] text-white px-6 py-3 rounded-xl font-bold text-[11px] hover:bg-[#3d2bd1] transition-all cursor-pointer shadow-md">
+                Salvar Palpite
+              </button>
+            } @else {
+              <div class="ml-4 px-6 py-3 rounded-xl font-bold text-[11px] text-gray-400 bg-gray-50 border border-gray-200">
+                Encerrado
+              </div>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="text-center py-20 text-gray-400 border border-dashed border-gray-200 rounded-2xl">
+          <p>Nenhum jogo disponível no momento.</p>
+        </div>
+      }
+    </div>
+</section>
+
+<section class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
+  <div class="flex items-center justify-between mb-6">
+    <h3 class="text-lg font-bold text-[#05060c] flex items-center gap-2">
+      <span class="text-[#4f39f6]">🕒</span> Meu Extrato
+    </h3>
+  </div>
+  <div class="max-h-[500px] overflow-y-auto pr-2">
+    <table class="w-full">
+      <thead class="text-[10px] text-gray-400 uppercase font-black border-b border-gray-50">
+        <tr>
+          <th class="text-left pb-4">Data</th>
+          <th class="text-left pb-4">Jogo</th>
+          <th class="text-center pb-4">Resultado</th>
+          <th class="text-center pb-4">Seu Palpite</th>
+          <th class="text-right pb-4">Pontos</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-50 text-sm">
+        @for (palpite of meuExtrato; track palpite.id) {
+          <tr>
+            <td class="py-5 font-bold text-[#88E788]">{{ palpite.data }}</td>
+            <td class="py-5 flex items-center gap-3">
+              <div class="w-6 h-4 bg-gray-100 rounded-sm overflow-hidden flex items-center justify-center">
+                <img [src]="palpite.bandeiraA" class="w-full h-full object-cover" alt="Bandeira">
+              </div>
+              <span class="font-medium">{{ palpite.timeA }} vs {{ palpite.timeB }}</span>
+            </td>
+            <td class="py-5 text-center">
+              @if (palpite.golsAReal !== null && palpite.golsBReal !== null) {
+                <span class="bg-gray-100 px-3 py-1 rounded-md text-xs font-mono">{{ palpite.golsAReal }} x {{ palpite.golsBReal }}</span>
+              } @else {
+                <span class="text-xs text-gray-400 italic">Pendente</span>
+              }
+            </td>
+            <td class="py-5 text-center font-bold">{{ palpite.palpiteA }} x {{ palpite.palpiteB }}</td>
+            <td class="py-5 text-right">
+              @if (palpite.pontos !== null) {
+                @if (palpite.pontos === 3) {
+                  <span class="bg-[#88E788]/10 text-[#05060c] border border-[#88E788] px-3 py-1 rounded-full text-[10px] font-black">+3 PTS</span>
+                } @else if (palpite.pontos === 1) {
+                  <span class="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full text-[10px] font-black">+1 PT</span>
+                } @else {
+                  <span class="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full text-[10px] font-black">0 PTS</span>
+                }
+              } @else {
+                <span class="text-xs text-gray-400">-</span>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="text-center py-10 text-gray-400">Nenhum palpite registrado no extrato.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="mt-6 text-center">
+    <button class="text-[13px] font-bold text-[#4f39f6] hover:text-[#3d2bd1] transition flex items-center gap-1 mx-auto">
+      Ver histórico completo <span>&gt;</span>
+    </button>
+  </div>
+</section>

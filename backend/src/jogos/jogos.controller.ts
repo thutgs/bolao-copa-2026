@@ -5,7 +5,7 @@ import { UpdateJogoDto } from './dto/update-jogo.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { FinalizarJogoDto } from './dto/finalizar-jogo.dto'; 
 
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 @Controller('jogos')
 export class JogosController {
   constructor(private readonly jogosService: JogosService) {}
