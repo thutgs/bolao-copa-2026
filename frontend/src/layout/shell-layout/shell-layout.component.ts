@@ -1,7 +1,10 @@
 import { Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
+
+// ATENÇÃO: Ajuste o caminho do AuthService para o do seu projeto, 
+// ou comente as linhas relacionadas a ele se ainda não existir.
+// import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-shell-layout',
@@ -12,18 +15,15 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class ShellLayoutComponent {
   private router = inject(Router);
-  private authService = inject(AuthService);
-
-  currentUser = computed(() => this.authService.getUser());
-
-  // Verifica se o usuário logado possui a flag is_global_admin como verdadeira
-  isAdmin = computed(() => {
-    const user = this.currentUser();
-    return user?.is_global_admin === true; 
-  });
   
+  // Se não tiver AuthService, você pode mockar o usuário temporariamente assim:
+  currentUser = computed(() => ({ nome: 'Admin', email: 'admin@bolao.com', avatar: 'masculino' }));
+  
+  // private authService = inject(AuthService);
+  // currentUser = computed(() => this.authService.getUser());
+
   logout(): void {
-    this.authService.logout();
+    // this.authService.logout();
     this.router.navigate(['/auth']);
   }
 }

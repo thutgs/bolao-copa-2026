@@ -32,8 +32,8 @@ interface RankingItem {
   posicao: number;
   nome: string;
   pontos: number;
-  acertos: number;
-  total: number;
+  totalPalpites: number; // Nova propriedade
+  acertosExatos: number; // Nova propriedade
   isUsuario: boolean;
 }
 
@@ -139,22 +139,38 @@ export class DashboardComponent implements OnInit {
     this.carregarDados();
   }
 
-  carregarDados(): void {
+  async carregarDados(): Promise<void> {
     this.isLoading.set(true);
 
-    if (this.isMockMode) {
-      // Usar dados mockados
-      this.carregarDadosMock();
-    } else {
-      // Carregar dados em paralelo da API real
-      Promise.all([
-        this.carregarBoloes(),
+    try {
+      // 1º PASSO: Carrega os bolões que o usuário participa PRIMEIRO
+      await this.carregarBoloes();
+
+      // Pega a lista de bolões que acabou de chegar do banco
+      const listaBoloes = this.boloes();
+
+      // Se a lista não estiver vazia, garante que o ID selecionado é válido
+      if (listaBoloes.length > 0) {
+        // Verifica se o bolão atualmente selecionado (ex: 1) existe na lista real
+        const bolaoValido = listaBoloes.find(b => b.id === this.bolaoSelecionado());
+        
+        // Se não existir, forçamos o signal a usar o ID do primeiro bolão do banco (o seu ID 3)
+        if (!bolaoValido) {
+          this.bolaoSelecionado.set(listaBoloes[0].id);
+        }
+      }
+
+      // 2º PASSO: AGORA SIM! Com o ID correto (3) no signal, buscamos o resto
+      await Promise.all([
         this.carregarJogos(),
         this.carregarRanking(),
         this.carregarUsuario()
-      ]).finally(() => {
-        this.isLoading.set(false);
-      });
+      ]);
+
+    } catch (error) {
+      console.error('Erro no carregamento do dashboard:', error);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
@@ -207,7 +223,7 @@ export class DashboardComponent implements OnInit {
 
   carregarRanking(): Promise<void> {
     return new Promise((resolve) => {
-      this.http.get<RankingItem[]>(`${this.API_URL}/ranking?bolaoId=${this.bolaoSelecionado()}`).subscribe({
+      this.http.get<RankingItem[]>(`${this.API_URL}/boloes/bolao/ranking?bolaoId=${this.bolaoSelecionado()}`).subscribe({
         next: (ranking) => {
           this.ranking.set(ranking);
           resolve();
@@ -230,7 +246,7 @@ export class DashboardComponent implements OnInit {
         return;
       }
 
-      this.http.get<Usuario>(`${this.API_URL}/usuarios/${currentUser.id}`).subscribe({
+      this.http.get<Usuario>(`${this.API_URL}/usuarios/${currentUser.id}?stats=true`).subscribe({
         next: (usuario) => {
           // Garante que o avatar existe puxando do próprio storage do AuthService
           const tempAvatar = localStorage.getItem('temp_avatar') as 'masculino' | 'feminino' | null;

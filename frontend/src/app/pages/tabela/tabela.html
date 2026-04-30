@@ -1,0 +1,211 @@
+<div class="p-6 max-w-[1600px] mx-auto bg-gray-50 min-h-screen">
+  
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Tabela da Copa</h1>
+    <p class="text-gray-500 text-sm">Acompanhe a classificação e o chaveamento oficial do torneio.</p>
+  </div>
+
+  <div class="flex border-b border-gray-200 mb-6 gap-8">
+    <button (click)="abaAtiva.set('grupos')" 
+            [class]="abaAtiva() === 'grupos' ? 'border-b-2 border-indigo-600 text-indigo-700 font-semibold' : 'text-gray-500 font-medium'"
+            class="pb-3 px-1 flex items-center gap-2 hover:text-indigo-600 transition-colors">
+      <i class="fas fa-calendar-alt"></i> Grupos
+    </button>
+    <button (click)="abaAtiva.set('eliminatorias')" 
+            [class]="abaAtiva() === 'eliminatorias' ? 'border-b-2 border-indigo-600 text-indigo-700 font-semibold' : 'text-gray-500 font-medium'"
+            class="pb-3 px-1 flex items-center gap-2 hover:text-indigo-600 transition-colors">
+      <i class="fas fa-trophy"></i> Eliminatórias
+    </button>
+  </div>
+
+ @if (abaAtiva() === 'grupos') {
+    <div class="flex flex-col xl:flex-row gap-6">
+      
+      <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        @for (grupo of letrasGrupos; track grupo) {
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-gray-50 text-gray-500 border-b">
+                <tr>
+                  <th class="px-3 py-3 font-extrabold text-gray-800 text-sm w-full">Grupo {{ grupo }}</th>
+                  <th class="px-1 py-3 font-medium text-center" title="Pontos">P</th>
+                  <th class="px-1 py-3 font-medium text-center" title="Jogos">J</th>
+                  <th class="px-1 py-3 font-medium text-center" title="Vitórias">V</th>
+                  <th class="px-1 py-3 font-medium text-center" title="Empates">E</th>
+                  <th class="px-1 py-3 font-medium text-center" title="Derrotas">D</th>
+                  <th class="px-1 py-3 font-medium text-center" title="Gols Pró">GP</th>
+                  <th class="px-1 py-3 font-medium text-center" title="Gols Contra">GC</th>
+                  <th class="px-2 py-3 font-medium text-center" title="Saldo de Gols">SG</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (time of tabelasPorGrupo()[grupo]; track time.id; let idx = $index) {
+                  <tr class="border-b last:border-0 hover:bg-gray-50/80 transition-colors" 
+                      [class.bg-green-100]="idx < 2"
+                      [class.bg-blue-100]="idx === 2 && idsTerceirosClassificados().includes(time.id)">
+                    
+                    <td class="px-3 py-2.5 w-full max-w-0">
+                      <div class="flex items-center gap-2.5 w-full">
+                        <span class="text-gray-400 font-medium w-2 shrink-0">{{ idx + 1 }}</span>
+                        <img [src]="time.url_bandeira" class="w-5 h-3.5 rounded-sm object-cover shadow-sm shrink-0">
+                        <span class="font-medium text-gray-700 truncate flex-1 min-w-0">{{ time.nome }}</span>
+                      </div>
+                    </td>
+
+                    <td class="px-1 py-2.5 text-center font-bold text-gray-800">{{ time.pontos }}</td>
+                    <td class="px-1 py-2.5 text-center text-gray-500">{{ time.jogos }}</td>
+                    <td class="px-1 py-2.5 text-center text-gray-500">{{ time.vitorias }}</td>
+                    <td class="px-1 py-2.5 text-center text-gray-500">{{ time.empates }}</td>
+                    <td class="px-1 py-2.5 text-center text-gray-500">{{ time.derrotas }}</td>
+                    <td class="px-1 py-2.5 text-center text-gray-500">{{ time.gols_pro ?? 0 }}</td>
+                    <td class="px-1 py-2.5 text-center text-gray-500">{{ time.gols_contra ?? 0 }}</td>
+                    <td class="px-2 py-2.5 text-center font-medium text-gray-600">{{ time.saldo_gols > 0 ? '+'+time.saldo_gols : time.saldo_gols }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+      <div class="w-full xl:w-[300px] bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden h-fit shrink-0">
+        
+        <div class="bg-gray-50 px-3 py-3 border-b border-gray-200">
+          <h2 class="text-sm font-extrabold text-gray-800">Melhores 3º Colocados</h2>
+        </div>
+        
+        <table class="w-full text-xs text-left">
+          <thead class="text-gray-500 border-b">
+            <tr>
+              <th class="px-3 py-3 font-medium w-full">Seleção</th>
+              <th class="px-1 py-3 font-medium text-center">Gr.</th>
+              <th class="px-1 py-3 font-medium text-center">P</th>
+              <th class="px-1 py-3 font-medium text-center" title="Gols Pró">GP</th>
+              <th class="px-1 py-3 font-medium text-center" title="Gols Contra">GC</th>
+              <th class="px-2 py-3 font-medium text-center">SG</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (time of melhoresTerceiros(); track time.id; let idx = $index) {
+              <tr class="border-b last:border-0 hover:bg-gray-50 transition-colors" 
+                  [class.bg-blue-100]="idx < 8"
+                  [class.opacity-50]="idx >= 8"
+                  [class.bg-gray-50]="idx >= 8">
+                
+                <td class="px-3 py-2.5 w-full max-w-0">
+                  <div class="flex items-center gap-2 w-full">
+                    <span class="text-gray-400 font-medium w-3 shrink-0">{{ idx + 1 }}</span>
+                    <img [src]="time.url_bandeira" class="w-5 h-3.5 rounded-sm object-cover shadow-sm shrink-0">
+                    <span class="font-medium text-gray-700 truncate flex-1 min-w-0">{{ time.nome }}</span>
+                  </div>
+                </td>
+
+                <td class="px-1 py-2.5 text-center text-gray-500 font-medium uppercase">{{ time.grupo }}</td>
+                <td class="px-1 py-2.5 text-center font-bold text-gray-800">{{ time.pontos }}</td>
+                <td class="px-1 py-2.5 text-center text-gray-500">{{ time.gols_pro ?? 0 }}</td>
+                <td class="px-1 py-2.5 text-center text-gray-500">{{ time.gols_contra ?? 0 }}</td>
+                <td class="px-2 py-2.5 text-center font-medium text-gray-600">{{ time.saldo_gols > 0 ? '+'+time.saldo_gols : time.saldo_gols }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+@if (abaAtiva() === 'eliminatorias') {
+    <div class="bg-gray-50/50 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+      
+      <div class="grid grid-flow-col gap-x-10 min-w-max pt-12 pb-6 px-6" style="grid-template-rows: repeat(16, minmax(65px, 1fr));">
+        
+        @for (fase of ordemFases; track fase) {
+          @for (jogo of estruturaMataMata()[fase]; track jogo.id; let idx = $index) {
+            
+            <div [style.grid-row]="'span ' + getSpan(fase)" class="w-[350px] relative flex flex-col justify-center py-1.5">
+              
+              @if (idx === 0) {
+                <div class="text-center absolute -top-10 left-0 right-0 z-20">
+                  <h3 class="text-[11px] font-extrabold text-gray-800 uppercase tracking-widest">{{ getNomeFaseVisual(fase) }}</h3>
+                </div>
+              }
+
+              @if (fase !== 'Final') {
+                <div class="absolute top-1/2 -right-5 w-5 h-[2px] bg-gray-300 z-0 -translate-y-1/2"></div>
+              }
+
+              @if (fase !== 'Dezesseis-avos') {
+                <div class="absolute top-1/2 -left-5 w-5 h-[2px] bg-gray-300 z-0 -translate-y-1/2"></div>
+                <div class="absolute top-1/4 -left-5 w-[2px] h-1/2 bg-gray-300 z-0"></div>
+              }
+
+              <div class="relative bg-white border border-gray-200 rounded-lg p-3 pt-4 shadow-sm hover:shadow-md transition-all z-10 w-full" [class.border-amber-200]="jogo.isParcial" [class.bg-amber-50]="jogo.isParcial">
+                
+                <div class="absolute -top-2.5 left-1/2 transform -translate-x-1/2 bg-white border px-3 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-widest whitespace-nowrap"
+                     [class.border-gray-200]="!jogo.isParcial" [class.text-gray-400]="!jogo.isParcial"
+                     [class.border-amber-300]="jogo.isParcial" [class.text-amber-600]="jogo.isParcial">
+                  {{ getShortNomeFase(fase) }} {{ idx + 1 }}
+                </div>
+
+                <div class="text-center text-[9px] text-gray-500 font-medium mb-3">
+                   @if (jogo.isPlaceholder) {
+                     <span class="italic text-gray-300">Aguardando definição</span>
+                   } @else if (jogo.isParcial) {
+                     <span class="italic text-amber-500/80 font-bold">Classificação Parcial Ao Vivo</span>
+                   } @else if (jogo.data_hora_inicio) {
+                     {{ jogo.data_hora_inicio | date:'dd/MM • HH:mm' }}
+                   } @else {
+                     Data a definir
+                   }
+                </div>
+
+                <div class="flex items-center justify-between w-full gap-2">
+                  
+                  <div class="flex items-center justify-end gap-2 flex-1 min-w-0">
+                    
+                    <span class="text-[9px] text-gray-400 font-bold hidden sm:block shrink-0 truncate text-right"
+                          [class.max-w-[60px]]="jogo.selecao_A" 
+                          [class.flex-1]="!jogo.selecao_A">
+                      {{ jogo.placeholder_A }}
+                    </span>
+                    
+                    @if (jogo.selecao_A) {
+                      <span class="font-bold text-gray-800 text-xs text-right truncate flex-1 min-w-0">{{ jogo.selecao_A.nome }}</span>
+                      <img [src]="jogo.selecao_A.url_bandeira" class="w-6 h-4 rounded-sm shadow-sm object-cover shrink-0">
+                    } @else {
+                      <div class="w-6 h-4 bg-gray-50 border border-gray-200 rounded-sm shrink-0"></div>
+                    }
+                  </div>
+
+                  <div class="flex items-center justify-center shrink-0 w-8">
+                    @if (!jogo.isPlaceholder && !jogo.isParcial) {
+                      <span class="font-bold text-base text-gray-800">{{ jogo.gols_A_real ?? '' }}</span>
+                      <span class="text-gray-300 font-light text-[10px] mx-1">x</span>
+                      <span class="font-bold text-base text-gray-800">{{ jogo.gols_B_real ?? '' }}</span>
+                    } @else {
+                      <span class="text-gray-200 font-light text-sm">x</span>
+                    }
+                  </div>
+
+                  <div class="flex items-center justify-start gap-2 flex-1 min-w-0">
+                    @if (jogo.selecao_B) {
+                      <img [src]="jogo.selecao_B.url_bandeira" class="w-6 h-4 rounded-sm shadow-sm object-cover shrink-0">
+                      <span class="font-bold text-gray-800 text-xs text-left truncate flex-1 min-w-0">{{ jogo.selecao_B.nome }}</span>
+                    } @else {
+                      <div class="w-6 h-4 bg-gray-50 border border-gray-200 rounded-sm shrink-0"></div>
+                    }
+                    
+                    <span class="text-[9px] text-gray-400 font-bold hidden sm:block shrink-0 truncate text-left"
+                          [class.max-w-[60px]]="jogo.selecao_B" 
+                          [class.flex-1]="!jogo.selecao_B">
+                      {{ jogo.placeholder_B }}
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

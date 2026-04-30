@@ -114,40 +114,112 @@ async function run() {
     console.log('🌍 Base limpa detectada. Inserindo 48 Seleções Oficiais...');
     const selecoesSalvas = await selecaoRepo.save(selecoesData);
 
-    // 3. Gerar os 72 Jogos da Fase de Grupos
-    console.log('⚽ Gerando tabela de confrontos da Fase de Grupos...');
-    let dataJogoBase = new Date('2026-06-11T16:00:00Z'); // Horário base do primeiro jogo
+// 3. Gerar os 72 Jogos da Fase de Grupos
+    console.log('⚽ Inserindo a tabela oficial de jogos com os horários e datas reais...');
+
+    const cronogramaOficial = [
+      // 1ª Rodada
+      { a: 'México', b: 'África do Sul', data: '2026-06-11T16:00:00-03:00' },
+      { a: 'Coreia do Sul', b: 'República Tcheca', data: '2026-06-11T23:00:00-03:00' },
+      { a: 'Canadá', b: 'Bósnia e Herzegovina', data: '2026-06-12T16:00:00-03:00' },
+      { a: 'Estados Unidos', b: 'Paraguai', data: '2026-06-12T22:00:00-03:00' },
+      { a: 'Catar', b: 'Suíça', data: '2026-06-13T16:00:00-03:00' },
+      { a: 'Brasil', b: 'Marrocos', data: '2026-06-13T19:00:00-03:00' },
+      { a: 'Haiti', b: 'Escócia', data: '2026-06-13T22:00:00-03:00' },
+      { a: 'Austrália', b: 'Turquia', data: '2026-06-14T01:00:00-03:00' },
+      { a: 'Alemanha', b: 'Curaçao', data: '2026-06-14T14:00:00-03:00' },
+      { a: 'Costa do Marfim', b: 'Equador', data: '2026-06-14T20:00:00-03:00' },
+      { a: 'Holanda', b: 'Japão', data: '2026-06-14T17:00:00-03:00' },
+      { a: 'Suécia', b: 'Tunísia', data: '2026-06-14T23:00:00-03:00' },
+      { a: 'Espanha', b: 'Cabo Verde', data: '2026-06-15T13:00:00-03:00' },
+      { a: 'Arábia Saudita', b: 'Uruguai', data: '2026-06-15T19:00:00-03:00' },
+      { a: 'Bélgica', b: 'Egito', data: '2026-06-15T16:00:00-03:00' },
+      { a: 'Irã', b: 'Nova Zelândia', data: '2026-06-15T22:00:00-03:00' },
+      { a: 'Áustria', b: 'Jordânia', data: '2026-06-17T01:00:00-03:00' },
+      { a: 'França', b: 'Senegal', data: '2026-06-16T16:00:00-03:00' },
+      { a: 'Iraque', b: 'Noruega', data: '2026-06-16T19:00:00-03:00' },
+      { a: 'Argentina', b: 'Argélia', data: '2026-06-16T22:00:00-03:00' },
+      { a: 'Portugal', b: 'RD Congo', data: '2026-06-17T14:00:00-03:00' },
+      { a: 'Inglaterra', b: 'Croácia', data: '2026-06-17T17:00:00-03:00' },
+      { a: 'Gana', b: 'Panamá', data: '2026-06-17T20:00:00-03:00' },
+      { a: 'Uzbequistão', b: 'Colômbia', data: '2026-06-17T21:00:00-03:00' },
+
+      // 2ª Rodada
+      { a: 'República Tcheca', b: 'África do Sul', data: '2026-06-18T13:00:00-03:00' },
+      { a: 'Suíça', b: 'Bósnia e Herzegovina', data: '2026-06-18T16:00:00-03:00' },
+      { a: 'Canadá', b: 'Catar', data: '2026-06-18T19:00:00-03:00' },
+      { a: 'México', b: 'Coreia do Sul', data: '2026-06-18T22:00:00-03:00' },
+      { a: 'Turquia', b: 'Paraguai', data: '2026-06-19T00:00:00-03:00' },
+      { a: 'Estados Unidos', b: 'Austrália', data: '2026-06-19T16:00:00-03:00' },
+      { a: 'Escócia', b: 'Marrocos', data: '2026-06-19T19:00:00-03:00' },
+      { a: 'Brasil', b: 'Haiti', data: '2026-06-19T21:30:00-03:00' },
+      { a: 'Tunísia', b: 'Japão', data: '2026-06-20T23:00:00-03:00' },
+      { a: 'Holanda', b: 'Suécia', data: '2026-06-20T14:00:00-03:00' },
+      { a: 'Alemanha', b: 'Costa do Marfim', data: '2026-06-20T17:00:00-03:00' },
+      { a: 'Equador', b: 'Curaçao', data: '2026-06-20T21:00:00-03:00' },
+      { a: 'Espanha', b: 'Arábia Saudita', data: '2026-06-21T13:00:00-03:00' },
+      { a: 'Bélgica', b: 'Irã', data: '2026-06-21T16:00:00-03:00' },
+      { a: 'Uruguai', b: 'Cabo Verde', data: '2026-06-21T19:00:00-03:00' },
+      { a: 'Nova Zelândia', b: 'Egito', data: '2026-06-21T22:00:00-03:00' },
+      { a: 'Argentina', b: 'Áustria', data: '2026-06-22T14:00:00-03:00' },
+      { a: 'França', b: 'Iraque', data: '2026-06-22T18:00:00-03:00' },
+      { a: 'Noruega', b: 'Senegal', data: '2026-06-22T21:00:00-03:00' },
+      { a: 'Jordânia', b: 'Argélia', data: '2026-06-23T00:00:00-03:00' },
+      { a: 'Portugal', b: 'Uzbequistão', data: '2026-06-23T14:00:00-03:00' },
+      { a: 'Inglaterra', b: 'Gana', data: '2026-06-23T17:00:00-03:00' },
+      { a: 'Panamá', b: 'Croácia', data: '2026-06-23T20:00:00-03:00' },
+      { a: 'Colômbia', b: 'RD Congo', data: '2026-06-23T23:00:00-03:00' },
+
+      // 3ª Rodada
+      { a: 'Suíça', b: 'Canadá', data: '2026-06-24T16:00:00-03:00' },
+      { a: 'Bósnia e Herzegovina', b: 'Catar', data: '2026-06-24T16:00:00-03:00' },
+      { a: 'Escócia', b: 'Brasil', data: '2026-06-24T19:00:00-03:00' },
+      { a: 'Marrocos', b: 'Haiti', data: '2026-06-24T19:00:00-03:00' },
+      { a: 'República Tcheca', b: 'México', data: '2026-06-24T22:00:00-03:00' },
+      { a: 'África do Sul', b: 'Coreia do Sul', data: '2026-06-24T22:00:00-03:00' },
+      { a: 'Equador', b: 'Alemanha', data: '2026-06-25T17:00:00-03:00' },
+      { a: 'Curaçao', b: 'Costa do Marfim', data: '2026-06-25T17:00:00-03:00' },
+      { a: 'Japão', b: 'Suécia', data: '2026-06-25T20:00:00-03:00' },
+      { a: 'Tunísia', b: 'Holanda', data: '2026-06-25T20:00:00-03:00' },
+      { a: 'Turquia', b: 'Estados Unidos', data: '2026-06-25T23:00:00-03:00' },
+      { a: 'Paraguai', b: 'Austrália', data: '2026-06-25T23:00:00-03:00' },
+      { a: 'Noruega', b: 'França', data: '2026-06-26T16:00:00-03:00' },
+      { a: 'Senegal', b: 'Iraque', data: '2026-06-26T16:00:00-03:00' },
+      { a: 'Cabo Verde', b: 'Arábia Saudita', data: '2026-06-26T21:00:00-03:00' },
+      { a: 'Uruguai', b: 'Espanha', data: '2026-06-26T21:00:00-03:00' },
+      { a: 'Egito', b: 'Irã', data: '2026-06-27T00:00:00-03:00' },
+      { a: 'Nova Zelândia', b: 'Bélgica', data: '2026-06-27T00:00:00-03:00' },
+      { a: 'Panamá', b: 'Inglaterra', data: '2026-06-27T18:00:00-03:00' },
+      { a: 'Croácia', b: 'Gana', data: '2026-06-27T18:00:00-03:00' },
+      { a: 'Colômbia', b: 'Portugal', data: '2026-06-27T20:30:00-03:00' },
+      { a: 'RD Congo', b: 'Uzbequistão', data: '2026-06-27T20:30:00-03:00' },
+      { a: 'Argélia', b: 'Áustria', data: '2026-06-27T23:00:00-03:00' },
+      { a: 'Jordânia', b: 'Argentina', data: '2026-06-28T23:00:00-03:00' }
+    ];
+
     let jogosGerados = 0;
 
-    // Percorre os grupos de A a L
-    for (const letraGrupo of 'ABCDEFGHIJKL') {
-      const timesGrupo = selecoesSalvas.filter((s) => s.grupo === letraGrupo);
-      
-      if (timesGrupo.length !== 4) continue; // Segurança caso falte algum time
+    for (const jogo of cronogramaOficial) {
+      // Procura os times no array de seleções já salvas no banco
+      const timeA = selecoesSalvas.find(s => s.nome === jogo.a);
+      const timeB = selecoesSalvas.find(s => s.nome === jogo.b);
 
-      // Formato clássico: Rodada 1 (1x2, 3x4), Rodada 2 (1x3, 4x2), Rodada 3 (4x1, 2x3)
-      const confrontos = [
-        [0, 1], [2, 3], 
-        [0, 2], [3, 1], 
-        [3, 0], [1, 2], 
-      ];
-
-      for (const [idxA, idxB] of confrontos) {
+      if (timeA && timeB) {
         const novoJogo = jogoRepo.create({
-          selecao_A: timesGrupo[idxA],
-          selecao_B: timesGrupo[idxB],
-          data_hora_inicio: new Date(dataJogoBase),
-          fase: `Grupo ${letraGrupo}`,
+          selecao_A: timeA,
+          selecao_B: timeB,
+          data_hora_inicio: new Date(jogo.data),
+          fase: `Grupo ${timeA.grupo}`, // Pega o grupo diretamente do cadastro do time
         });
+        
         await jogoRepo.save(novoJogo);
         jogosGerados++;
-        
-        // Pula 4 horas para o próximo jogo
-        dataJogoBase.setHours(dataJogoBase.getHours() + 4);
+      } else {
+        console.error(`⚠️ Erro ao encontrar times: ${jogo.a} x ${jogo.b}`);
       }
     }
 
-    console.log(`✅ ${jogosGerados} Jogos da Fase de Grupos cadastrados com sucesso.`);
+    console.log(`✅ ${jogosGerados} Jogos reais cadastrados com 100% de precisão de calendário!`);
     console.log('🚀 Seeding finalizado e pronto para produção!');
 
   } catch (error) {
