@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
 import { BoloesService } from './boloes.service';
 import { CreateBolaoDto } from './dto/create-bolao.dto';
 import { UpdateBolaoDto } from './dto/update-bolao.dto';
@@ -48,5 +48,12 @@ export class BoloesController {
   @Get('codigo/:codigo')
   buscarPorCodigo(@Param('codigo') codigo: string) {
     return this.boloesService.buscarPorCodigo(codigo);
+  }
+
+  // Adicione esta rota (preferencialmente ANTES do @Get(':id') para não conflitar)
+  @Get('bolao/ranking')
+  getRanking(@Query('bolaoId') bolaoId: string, @Request() req) {
+    const usuarioLogadoId = req.usuario.sub;
+    return this.boloesService.getRanking(+bolaoId, usuarioLogadoId);
   }
 }

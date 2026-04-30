@@ -1,0 +1,496 @@
+<div class="dashboard-content relative">
+
+  @if (isLoading()) {
+  <!-- Loading state -->
+  <div class="flex items-center justify-center h-[400px]">
+    <div class="w-12 h-12 border-3 border-[#532aab]/30 border-t-[#532aab] rounded-full animate-spin"></div>
+  </div>
+  } @else {
+  <!-- Select de bolão estilizado - No topo da tela -->
+  <div class="mb-2 pt-3">
+    <div class="flex justify-center">
+      <div class="relative">
+        <select (change)="selecionarBolao($any($event.target).value)"
+          class="appearance-none bg-white border border-gray-200 text-gray-900 py-2 px-4 pr-10 rounded-xl cursor-pointer hover:border-[#532aab]/50 transition-all duration-300 focus:border-[#532aab] focus:ring-2 focus:ring-[#532aab]/20 outline-none min-w-[280px] shadow-sm text-sm">
+          @for (bolao of boloes(); track bolao.id) {
+          <option [value]="bolao.id" [selected]="bolao.id === bolaoSelecionado()">
+            {{ bolao.nome }} ({{ bolao.participantes }} participantes)
+          </option>
+          }
+        </select>
+        <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid principal - 3 colunas no topo -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-2">
+
+    <!-- � Card de Usuário (Esquerda) -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-3 h-full flex flex-col">
+        <h2 class="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Perfil
+        </h2>
+
+        <!-- Parte superior: Avatar à esquerda, informações à direita -->
+        <div class="flex gap-3 flex-1 items-center">
+          <!-- Avatar (esquerda) -->
+          <div class="flex-shrink-0">
+            <div
+              class="w-20 h-20 rounded-full bg-[#532aab]/10 flex items-center justify-center border-2 border-[#532aab]/30">
+              @if (usuario()?.avatar === 'feminino') {
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+                <path d="M12 14a4 4 0 0 1 4 4" />
+              </svg>
+              } @else {
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              }
+            </div>
+          </div>
+
+          <!-- Informações (direita) -->
+          <div class="flex-1 flex flex-col justify-center">
+            <!-- Linha 1: Nome (Médio = 2x) -->
+            <div class="mb-2">
+              <p class="text-gray-900 font-semibold text-base">{{ usuario()?.nome || 'Usuário' }}</p>
+            </div>
+
+            <!-- Linha 2: Posição no ranking (Pequeno = 1x) -->
+            <div class="mb-2 flex items-center gap-1.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                <path d="M4 22h16" />
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                <path d="M14 14.66V17c0 .55-.47.98-.97 1.21C16.15 18.75 17 20.24 17 22" />
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+              </svg>
+              <span class="text-gray-500 text-sm">Posição no ranking</span>
+            </div>
+
+            <!-- Linha 3: Número da posição (Grande = 4x) -->
+            <div class="mb-2">
+              <span class="text-2xl font-bold text-gray-900">#{{ usuario()?.posicao || 0 }}</span>
+            </div>
+
+            <!-- Linha 4: Variação de posição -->
+            <div>
+              <div class="flex items-center gap-1 text-[#b3ca45]">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="18 15 12 9 6 15" />
+                </svg>
+                <span class="text-sm font-medium">+2 posições</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Separador horizontal -->
+        <div class="border-t border-gray-200 my-3"></div>
+
+        <!-- Parte inferior: Pontuação total -->
+        <div class="flex flex-col flex-1 justify-center">
+          <div class="mb-2">
+            <span class="text-gray-500 text-base">Pontuação total</span>
+          </div>
+          <div class="flex items-baseline gap-1.5">
+            <span class="text-4xl font-bold text-[#b3ca45]">{{ usuario()?.pontos || 0 }}</span>
+            <span class="text-[#b3ca45] text-base font-medium">pts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⚽ Próximos Jogos (Centro) -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-1.5 h-full flex flex-col">
+        <h2 class="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+          Próximos Jogos
+        </h2>
+
+        <div class="flex-1 flex flex-col gap-2">
+          @for (jogo of jogos().slice(0, 4); track jogo.id) {
+          <div class="py-2 px-3 rounded-lg"
+            [style.background-color]="jogo.status === 'futuro' ? 'rgba(83, 42, 171, 0.08)' : ''">
+            <div class="flex items-center justify-between gap-2">
+              <!-- Conteúdo centralizado: tempo + times -->
+              <div class="flex-1 flex flex-col justify-center gap-1.5 h-full">
+                <!-- Contador de tempo -->
+                <div class="flex justify-center">
+                  <span class="text-[#532aab] text-xs font-semibold">{{ getTempoParaJogo(jogo.data, jogo.hora) }}</span>
+                </div>
+
+                <!-- Times -->
+                <div class="flex items-center justify-center gap-1.5">
+                  <!-- Time A -->
+                  <div class="flex items-center gap-1.5 justify-end flex-1">
+                    <img [src]="jogo.flagAUrl" [alt]="jogo.selecaoA" class="w-10 h-6 object-cover rounded shadow-sm"
+                      onerror="this.style.display='none'">
+                    <span class="text-gray-900 font-semibold text-sm">{{ getSigla(jogo.selecaoA) }}</span>
+                  </div>
+
+                  <!-- VS -->
+                  <div class="flex flex-col items-center px-1.5">
+                    <span class="text-gray-400 text-sm font-bold">VS</span>
+                  </div>
+
+                  <!-- Time B -->
+                  <div class="flex items-center gap-1.5 justify-start flex-1">
+                    <span class="text-gray-900 font-semibold text-sm">{{ getSigla(jogo.selecaoB) }}</span>
+                    <img [src]="jogo.flagBUrl" [alt]="jogo.selecaoB" class="w-10 h-6 object-cover rounded shadow-sm"
+                      onerror="this.style.display='none'">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botão de ação à direita -->
+              @if (jogo.status === 'futuro') {
+              <button (click)="fazerPalpite(jogo.id)"
+                class="px-4.5 py-2.25 bg-[#532aab] text-white font-semibold rounded-md hover:-translate-y-0.5 transition-all duration-300 text-sm whitespace-nowrap">
+                Palpitar
+              </button>
+              } @else if (jogo.status === 'iniciado') {
+              <div
+                class="px-4.5 py-2.25 bg-gray-200 text-gray-500 text-center rounded-md font-medium text-sm whitespace-nowrap">
+                <span class="inline-flex items-center gap-0.5">
+                  <svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                  Bloqueado
+                </span>
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+
+        <!-- Botão Ver todos os jogos -->
+        <button (click)="verTodosJogos()"
+          class="mt-1 w-full py-1 border border-[#532aab] text-[#532aab] font-semibold rounded-lg hover:bg-[#532aab] hover:text-white transition-all duration-300 text-xs">
+          Ver todos os jogos
+        </button>
+      </div>
+    </div>
+
+    <!-- 📊 Gráfico Donut (Direita) -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-1.5 h-full flex flex-col">
+        <h2 class="text-sm font-semibold text-gray-900 mb-1.5 flex items-center gap-1.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18" />
+            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" />
+          </svg>
+          Desempenho
+        </h2>
+
+        <div class="flex-1 flex items-center justify-center">
+          <app-donut-chart [data]="donutChartData()"></app-donut-chart>
+        </div>
+
+        @if (feedbackDesempenho()) {
+        <div class="mt-3 p-3 rounded-xl flex items-start gap-3" [ngClass]="feedbackDesempenho()!.corBg">
+          <div class="mt-0.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              [ngClass]="feedbackDesempenho()!.corTexto" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M8 21h8" />
+              <path d="M12 17v4" />
+              <path d="M7 4h10" />
+              <path d="M5 4h14v5a7 7 0 0 1-14 0V4z" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <span class="text-sm font-medium" [ngClass]="feedbackDesempenho()!.corTexto">{{ feedbackDesempenho()!.texto
+              }}</span>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Ranking e Jogos do Dia (3 colunas: Ranking=2, Jogos do Dia=1) -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+    <!-- Ranking (2 colunas = Perfil + Próximos Jogos) -->
+    <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-lg p-3">
+      <h2 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+          <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+          <path d="M4 22h16" />
+          <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+          <path d="M14 14.66V17c0 .55-.47.98-.97 1.21C16.15 18.75 17 20.24 17 22" />
+          <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+        </svg>
+        Ranking - {{ bolaoAtual()?.nome || 'Bolão' }}
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left text-gray-500 text-xs border-b border-gray-200">
+              <th class="pb-2 font-medium w-12">#</th>
+              <th class="pb-2 font-medium">Participante</th>
+              <th class="pb-2 font-medium text-center">Palpites</th>
+              <th class="pb-2 font-medium text-center">Acertos Exatos</th>
+              <th class="pb-2 font-medium text-right">Pontos</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of ranking().slice(0, 5); track item.posicao) {
+            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-all duration-300 cursor-pointer"
+              [class.border-l-2]="item.isUsuario" [class.border-l-[#532aab]]="item.isUsuario"
+              [class.bg-[#532aab]/5]="item.isUsuario">
+
+              <!-- Posição -->
+              <td class="py-2">
+                <div class="flex items-center gap-1.5">
+                  @if (item.posicao <= 3) { <span class="text-lg">{{ getMedalha(item.posicao) }}</span>
+                    } @else {
+                    <span class="text-gray-600 font-medium text-sm">{{ item.posicao }}</span>
+                    }
+                </div>
+              </td>
+
+              <!-- Nome -->
+              <td class="py-2">
+                <span class="text-gray-900 font-medium text-sm">{{ item.nome }}</span>
+              </td>
+
+              <!-- Palpites Feitos -->
+              <td class="py-2 text-center">
+                <span class="text-gray-600 text-sm">{{ item.totalPalpites }}</span>
+              </td>
+
+              <!-- Acertos Exatos -->
+              <td class="py-2 text-center">
+                <span class="text-[#1e8e3e] font-semibold text-sm">{{ item.acertosExatos }}</span>
+              </td>
+
+              <!-- Pontos -->
+              <td class="py-2 text-right">
+                <span class="text-gray-900 font-bold text-sm">{{ item.pontos }}</span>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <button (click)="mostrarRankingModal.set(true)"
+        class="w-full mt-3 py-2 border border-[#532aab]/30 text-[#532aab] font-medium text-sm rounded-lg hover:bg-[#532aab]/5 transition-all">
+        Ver ranking completo
+      </button>
+    </div>
+
+    <!-- Jogos do Dia -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-3">
+      <h2 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+        Jogos do Dia
+      </h2>
+
+      <div class="flex flex-col">
+        @for (jogo of jogos().slice(0, 3); track jogo.id) {
+        <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+
+          <!-- ESQUERDA: Data e Mês -->
+          <div
+            class="flex flex-col items-center justify-center w-12 h-14 bg-[#e6f4ea] rounded-xl mr-3 flex-shrink-0 shadow-sm">
+            <span class="text-[#1e8e3e] font-bold text-lg leading-none mb-0.5">{{ formatarDia(jogo.data) }}</span>
+            <span class="text-[#1e8e3e] font-medium text-[10px] uppercase">{{ formatarMes(jogo.data) }}</span>
+          </div>
+
+          <!-- CENTRO: Confronto e Hora -->
+          <div class="flex flex-1 items-center justify-center">
+            <div class="flex items-center justify-end gap-2 flex-1">
+              <img [src]="jogo.flagAUrl" [alt]="jogo.selecaoA"
+                class="w-8 h-8 rounded-full object-cover border border-gray-100 shadow-sm"
+                onerror="this.style.display='none'">
+              <span class="font-bold text-gray-900 text-[15px]">{{ getSigla(jogo.selecaoA) }}</span>
+            </div>
+
+            <div class="flex flex-col items-center justify-center px-3 w-16">
+              <span class="text-gray-400 text-sm font-bold mb-0.5">x</span>
+              <span class="text-gray-900 font-semibold text-xs">{{ formatarApenasHora(jogo.hora) }}</span>
+            </div>
+
+            <div class="flex items-center justify-start gap-2 flex-1">
+              <span class="font-bold text-gray-900 text-[15px]">{{ getSigla(jogo.selecaoB) }}</span>
+              <img [src]="jogo.flagBUrl" [alt]="jogo.selecaoB"
+                class="w-8 h-8 rounded-full object-cover border border-gray-100 shadow-sm"
+                onerror="this.style.display='none'">
+            </div>
+          </div>
+
+          <!-- DIREITA: Status -->
+          <div class="ml-3 flex-shrink-0">
+            @if (jogo.status === 'futuro') {
+            <div class="px-3 py-1.5 bg-[#e6f4ea] rounded-lg">
+              <span class="text-[#1e8e3e] font-semibold text-xs whitespace-nowrap">Em breve</span>
+            </div>
+            } @else if (jogo.status === 'iniciado') {
+            <div class="px-3 py-1.5 bg-blue-50 rounded-lg">
+              <span class="text-blue-600 font-semibold text-xs whitespace-nowrap">Ao vivo</span>
+            </div>
+            } @else {
+            <div class="px-3 py-1.5 bg-gray-100 rounded-lg">
+              <span class="text-gray-600 font-semibold text-xs whitespace-nowrap">Finalizado</span>
+            </div>
+            }
+          </div>
+
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Informativo Dinâmico (Palpites Pendentes) -->
+  @if (temJogosPendentes()) {
+  <div
+    class="mt-4 bg-gradient-to-r from-[#e6f4ea] to-white rounded-2xl border border-gray-200 shadow-sm p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 bg-[#1e8e3e]/10 rounded-full flex items-center justify-center flex-shrink-0">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e8e3e" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 21h8" />
+          <path d="M12 17v4" />
+          <path d="M7 4h10" />
+          <path d="M5 4h14v5a7 7 0 0 1-14 0V4z" />
+          <circle cx="12" cy="9" r="2" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-bold text-gray-900 text-base">Você tem palpites pendentes!</h3>
+        <p class="text-gray-600 text-sm mt-0.5">Não perca a chance de pontuar no bolão, faça seus palpites agora.</p>
+      </div>
+    </div>
+    <button (click)="verTodosJogos()"
+      class="px-6 py-2.5 bg-[#1e8e3e] text-white font-semibold text-sm rounded-xl hover:bg-[#166c2f] transition-all whitespace-nowrap shadow-md">
+      Fazer palpites
+    </button>
+  </div>
+  }
+
+  <!-- Modal Ranking Completo -->
+  @if (mostrarRankingModal()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="mostrarRankingModal.set(false)"></div>
+
+    <!-- Modal Content -->
+    <div class="relative bg-white rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl animate-fade-in">
+      <div
+        class="p-4 sm:p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10 rounded-t-2xl">
+        <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+            <path d="M4 22h16" />
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+            <path d="M14 14.66V17c0 .55-.47.98-.97 1.21C16.15 18.75 17 20.24 17 22" />
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+          </svg>
+          Ranking Completo - {{ bolaoAtual()?.nome || 'Bolão' }}
+        </h2>
+        <button (click)="mostrarRankingModal.set(false)"
+          class="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="overflow-y-auto p-4 sm:p-6">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left text-gray-500 text-xs border-b border-gray-200">
+              <th class="pb-2 font-medium w-12">#</th>
+              <th class="pb-2 font-medium">Participante</th>
+              <th class="pb-2 font-medium text-center">Palpites</th>
+              <th class="pb-2 font-medium text-center">Acertos Exatos</th>
+              <th class="pb-2 font-medium text-right">Pontos</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of ranking().slice(0, 5); track item.posicao) {
+            <tr class="border-b border-gray-100 hover:bg-gray-50 transition-all duration-300 cursor-pointer"
+              [class.border-l-2]="item.isUsuario" [class.border-l-[#532aab]]="item.isUsuario"
+              [class.bg-[#532aab]/5]="item.isUsuario">
+
+              <!-- Posição -->
+              <td class="py-2">
+                <div class="flex items-center gap-1.5">
+                  @if (item.posicao <= 3) { <span class="text-lg">{{ getMedalha(item.posicao) }}</span>
+                    } @else {
+                    <span class="text-gray-600 font-medium text-sm">{{ item.posicao }}</span>
+                    }
+                </div>
+              </td>
+
+              <!-- Nome -->
+              <td class="py-2">
+                <span class="text-gray-900 font-medium text-sm">{{ item.nome }}</span>
+              </td>
+
+              <!-- Palpites Feitos -->
+              <td class="py-2 text-center">
+                <span class="text-gray-600 text-sm">{{ item.totalPalpites }}</span>
+              </td>
+
+              <!-- Acertos Exatos -->
+              <td class="py-2 text-center">
+                <span class="text-[#1e8e3e] font-semibold text-sm">{{ item.acertosExatos }}</span>
+              </td>
+
+              <!-- Pontos -->
+              <td class="py-2 text-right">
+                <span class="text-gray-900 font-bold text-sm">{{ item.pontos }}</span>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  }
+  }
+</div>

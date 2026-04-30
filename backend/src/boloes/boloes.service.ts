@@ -6,7 +6,7 @@ import {
   BadRequestException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Bolao } from './entities/bolao.entity';
 import { UsuarioBolao } from './entities/usuario-bolao.entity';
 import { CreateBolaoDto } from './dto/create-bolao.dto';
@@ -19,6 +19,7 @@ export class BoloesService {
     private bolaoRepository: Repository<Bolao>,
     @InjectRepository(UsuarioBolao)
     private usuarioBolaoRepository: Repository<UsuarioBolao>,
+    private dataSource: DataSource, // Injete o DataSource para a query bruta
   ) {}
 
   private gerarCodigoConvite(): string {
@@ -193,5 +194,33 @@ export class BoloesService {
       descricao: bolao.descricao,
       criador: bolao.criador.nome,
     };
+  }
+
+  async getRanking(bolaoId: number, usuarioLogadoId: number) {
+    await this.findOne(bolaoId); 
+
+    // Atualizamos a query para contar o total de palpites e os acertos exatos (3 pontos)
+    const rankingRaw = await this.dataSource.query(`
+      SELECT 
+        u.id as usuario_id,
+        u.nome,
+        pb."pontuação_total" as pontos,
+        (SELECT COUNT(*) FROM palpites p WHERE p.usuario_id = u.id) as total_palpites,
+        (SELECT COUNT(*) FROM palpites p WHERE p.usuario_id = u.id AND p.pontos_obtidos = 3) as acertos_exatos
+      FROM usuarios_boloes pb
+      INNER JOIN usuarios u ON u.id = pb.usuario_id
+      WHERE pb.bolao_id = $1
+      ORDER BY pb."pontuação_total" DESC, acertos_exatos DESC
+    `, [bolaoId]);
+
+    // Mapeamos os novos nomes para o Frontend
+    return rankingRaw.map((row, index) => ({
+      posicao: index + 1,
+      nome: row.nome,
+      pontos: Number(row.pontos),
+      totalPalpites: Number(row.total_palpites),
+      acertosExatos: Number(row.acertos_exatos),
+      isUsuario: row.usuario_id === usuarioLogadoId 
+    }));
   }
 }

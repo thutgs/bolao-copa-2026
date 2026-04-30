@@ -1,0 +1,326 @@
+<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#05060c]">
+  <!-- Fundo com imagem de estádio/futebol -->
+  <div class="absolute inset-0 z-0">
+    <!-- GIF em loop cover -->
+    <img src="https://media.tenor.com/7123A1vWbPEAAAAd/stadium-football.gif" alt="Stadium Background" class="absolute inset-0 w-full h-full object-cover">
+    <!-- Overlay escuro para legibilidade -->
+    <div class="absolute inset-0 bg-[#05060c]/80"></div>
+  </div>
+
+  <!-- Card -->
+  <div class="w-full max-w-[420px] p-10 bg-[#1a1d24]/85 backdrop-blur-md rounded-2xl border border-[#2d3139] shadow-2xl relative z-10">
+    <!-- Logo GOL a GOL -->
+    <div class="text-center mb-8">
+      <div class="flex justify-center mb-4">
+        <!-- SVG da logo: Trave de gol com bola -->
+        <svg width="100" height="80" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Trave de gol (perspectiva) -->
+          <path d="M20 140 L20 40 L180 40 L180 140" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <!-- Travessão superior -->
+          <path d="M20 40 L180 40" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+          <!-- Postes verticais -->
+          <path d="M20 40 L20 140" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+          <path d="M180 40 L180 140" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+          <!-- Rede da trave (linhas horizontais) -->
+          <line x1="25" y1="60" x2="175" y2="60" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+          <line x1="25" y1="80" x2="175" y2="80" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+          <line x1="25" y1="100" x2="175" y2="100" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+          <line x1="25" y1="120" x2="175" y2="120" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+          <!-- Rede da trave (linhas verticais) -->
+          <line x1="50" y1="40" x2="50" y2="140" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+          <line x1="80" y1="40" x2="80" y2="140" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+          <line x1="110" y1="40" x2="110" y2="140" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+          <line x1="140" y1="40" x2="140" y2="140" stroke="#ffffff" stroke-width="1.5" opacity="0.5"/>
+          <!-- Linhas diagonais da rede -->
+          <line x1="35" y1="40" x2="25" y2="55" stroke="#ffffff" stroke-width="1" opacity="0.3"/>
+          <line x1="65" y1="40" x2="50" y2="65" stroke="#ffffff" stroke-width="1" opacity="0.3"/>
+          <line x1="95" y1="40" x2="80" y2="65" stroke="#ffffff" stroke-width="1" opacity="0.3"/>
+          <line x1="125" y1="40" x2="110" y2="65" stroke="#ffffff" stroke-width="1" opacity="0.3"/>
+          <!-- Bola de futebol (verde) -->
+          <circle cx="145" cy="55" r="18" fill="#532aab"/>
+          <!-- Hexágonos da bola -->
+          <path d="M145 43 L153 48 L153 58 L145 63 L137 58 L137 48 Z" fill="#05060c" opacity="0.3"/>
+          <path d="M145 43 L145 48" stroke="#05060c" stroke-width="1" opacity="0.5"/>
+          <path d="M153 48 L158 52" stroke="#05060c" stroke-width="1" opacity="0.5"/>
+          <path d="M153 58 L158 54" stroke="#05060c" stroke-width="1" opacity="0.5"/>
+          <path d="M145 63 L145 58" stroke="#05060c" stroke-width="1" opacity="0.5"/>
+          <path d="M137 58 L132 54" stroke="#05060c" stroke-width="1" opacity="0.5"/>
+          <path d="M137 48 L132 52" stroke="#05060c" stroke-width="1" opacity="0.5"/>
+          <!-- Brilho na bola -->
+          <ellipse cx="140" cy="48" rx="4" ry="3" fill="#ffffff" opacity="0.4"/>
+          <!-- Trajetória da bola (linhas de velocidade) -->
+          <line x1="165" y1="48" x2="175" y2="42" stroke="#532aab" stroke-width="3" stroke-linecap="round"/>
+          <line x1="168" y1="55" x2="180" y2="50" stroke="#532aab" stroke-width="3" stroke-linecap="round"/>
+          <line x1="165" y1="62" x2="175" y2="58" stroke="#532aab" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold text-white tracking-wider m-0">GOL<span class="text-[#532aab] font-extrabold">a</span>GOL</h1>
+    </div>
+
+    <!-- Toggle Entrar/Cadastrar -->
+    <div class="flex gap-2 bg-[#05060c] p-1.5 rounded-xl mb-6">
+      <button
+        class="flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200"
+        [class.text-white/60]="mode() !== 'login'"
+        [class.hover:text-white]="mode() !== 'login'"
+        [class.text-[#05060c]]="mode() === 'login'"
+        [class.bg-[#532aab]]="mode() === 'login'"
+        [class.font-semibold]="mode() === 'login'"
+        (click)="toggleMode('login')"
+        type="button">
+        Entrar
+      </button>
+      <button
+        class="flex-1 py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200"
+        [class.text-white/60]="mode() !== 'cadastro'"
+        [class.hover:text-white]="mode() !== 'cadastro'"
+        [class.text-[#05060c]]="mode() === 'cadastro'"
+        [class.bg-[#532aab]]="mode() === 'cadastro'"
+        [class.font-semibold]="mode() === 'cadastro'"
+        (click)="toggleMode('cadastro')"
+        type="button">
+        Cadastrar
+      </button>
+    </div>
+
+    <!-- Mensagem de erro -->
+    @if (errorMessage()) {
+      <div class="py-3.5 px-4 mb-4 text-sm text-red-400 bg-red-400/10 border border-red-400/30 rounded-lg">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <!-- Formulário de Login -->
+    @if (mode() === 'login') {
+      <form class="flex flex-col gap-4" (ngSubmit)="onLogin()">
+        <div class="flex flex-col gap-1.5">
+          <label for="login-email" class="text-sm font-medium text-white/80">Email</label>
+          <input
+            id="login-email"
+            type="email"
+            [(ngModel)]="loginEmail"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="seu@email.com"
+            class="py-3.5 px-4 text-[15px] text-white bg-[#05060c] border border-[#2d3139] rounded-xl outline-none transition-all duration-200 placeholder:text-white/40 focus:border-[#532aab] focus:ring-[3px] focus:ring-[#532aab]/15"
+            required>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="login-senha" class="text-sm font-medium text-white/80">Senha</label>
+          <div class="relative">
+            <input
+              id="login-senha"
+              [type]="mostrarSenhaLogin() ? 'text' : 'password'"
+              [(ngModel)]="loginSenha"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="Digite sua senha"
+              class="w-full py-3.5 pl-4 pr-12 text-[15px] text-white bg-[#05060c] border border-[#2d3139] rounded-xl outline-none transition-all duration-200 placeholder:text-white/40 focus:border-[#532aab] focus:ring-[3px] focus:ring-[#532aab]/15"
+              required>
+            <button
+              type="button"
+              (click)="toggleSenhaLogin()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#532aab] transition-colors p-1"
+              tabindex="-1">
+              @if (mostrarSenhaLogin()) {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              } @else {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="flex items-center justify-center py-4 mt-2 text-[15px] font-semibold text-[#05060c] bg-[#532aab] rounded-xl cursor-pointer transition-all duration-200 hover:brightness-90 disabled:opacity-70 disabled:cursor-not-allowed"
+          [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="w-5 h-5 border-2 border-[#05060c]/30 border-t-[#05060c] rounded-full animate-spin"></span>
+          } @else {
+            Entrar
+          }
+        </button>
+      </form>
+    }
+
+    <!-- Formulário de Cadastro -->
+    @if (mode() === 'cadastro') {
+      <form class="flex flex-col gap-4" (ngSubmit)="onCadastro()">
+        <div class="flex flex-col gap-1.5">
+          <label for="cadastro-nome" class="text-sm font-medium text-white/80">Nome completo</label>
+          <input
+            id="cadastro-nome"
+            type="text"
+            [(ngModel)]="cadastroNome"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="Seu nome"
+            class="py-3.5 px-4 text-[15px] text-white bg-[#05060c] border border-[#2d3139] rounded-xl outline-none transition-all duration-200 placeholder:text-white/40 focus:border-[#532aab] focus:ring-[3px] focus:ring-[#532aab]/15"
+            required>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="cadastro-email" class="text-sm font-medium text-white/80">Email</label>
+          <input
+            id="cadastro-email"
+            type="email"
+            [(ngModel)]="cadastroEmail"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="seu@email.com"
+            class="py-3.5 px-4 text-[15px] text-white bg-[#05060c] border border-[#2d3139] rounded-xl outline-none transition-all duration-200 placeholder:text-white/40 focus:border-[#532aab] focus:ring-[3px] focus:ring-[#532aab]/15"
+            required>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="cadastro-senha" class="text-sm font-medium text-white/80">Senha</label>
+          <div class="relative">
+            <input
+              id="cadastro-senha"
+              [type]="mostrarSenhaCadastro() ? 'text' : 'password'"
+              [(ngModel)]="cadastroSenha"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="Mínimo 8 caracteres"
+              class="w-full py-3.5 pl-4 pr-12 text-[15px] text-white bg-[#05060c] border border-[#2d3139] rounded-xl outline-none transition-all duration-200 placeholder:text-white/40 focus:border-[#532aab] focus:ring-[3px] focus:ring-[#532aab]/15"
+              required>
+            <button
+              type="button"
+              (click)="toggleSenhaCadastro()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#532aab] transition-colors p-1"
+              tabindex="-1">
+              @if (mostrarSenhaCadastro()) {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              } @else {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="cadastro-confirmar-senha" class="text-sm font-medium text-white/80">Confirmar Senha</label>
+          <div class="relative">
+            <input
+              id="cadastro-confirmar-senha"
+              [type]="mostrarConfirmarSenha() ? 'text' : 'password'"
+              [(ngModel)]="cadastroConfirmarSenha"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="Digite a senha novamente"
+              class="w-full py-3.5 pl-4 pr-12 text-[15px] text-white bg-[#05060c] border border-[#2d3139] rounded-xl outline-none transition-all duration-200 placeholder:text-white/40 focus:border-[#532aab] focus:ring-[3px] focus:ring-[#532aab]/15"
+              required>
+            <button
+              type="button"
+              (click)="toggleConfirmarSenha()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-[#532aab] transition-colors p-1"
+              tabindex="-1">
+              @if (mostrarConfirmarSenha()) {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                  <line x1="1" y1="1" x2="23" y2="23"/>
+                </svg>
+              } @else {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              }
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="cadastro-selecao" class="text-sm font-medium text-white/80">Seleção Preferida</label>
+          <select
+            id="cadastro-selecao"
+            (change)="onSelecaoChange($event)"
+            class="py-3.5 px-4 text-[15px] text-white bg-[#1a1d24] border border-[#2d3139] rounded-xl outline-none transition-all duration-200 cursor-pointer appearance-none focus:border-[#532aab] focus:ring-[3px] focus:ring-[#532aab]/15 bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2712%27%20height%3D%2712%27%20viewBox%3D%270%200%2012%2012%27%3E%3Cpath%20fill%3D%27%23ffffff%27%20d%3D%27M6%208L1%203h10z%27%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_1rem_center] pr-10">
+            <option value="">Selecione uma seleção (opcional)</option>
+            @for (selecao of selecoes(); track selecao.id) {
+              @if (selecao.nome !== 'Outra (digite)') {
+                <option [value]="selecao.id">
+                  {{ selecao.nome }}
+                </option>
+              } @else {
+                <option value="outra">{{ selecao.nome }}</option>
+              }
+            }
+          </select>
+        </div>
+
+        <!-- Input para "Outra" seleção -->
+        @if (mostrarOutraSelecao()) {
+          <div class="flex flex-col gap-1.5 animate-fade-in">
+            <label for="cadastro-outra-selecao" class="text-sm font-medium text-white/80">Digite a seleção desejada</label>
+            <input
+              id="cadastro-outra-selecao"
+              name="outraSelecao"
+              type="text"
+              [ngModel]="cadastroOutraSelecao()"
+              (ngModelChange)="cadastroOutraSelecao.set($event)"
+              placeholder="Ex: Suécia, Romênia, etc."
+              class="py-3.5 px-4 text-[15px] text-white bg-[#05060c] border border-[#2d3139] rounded-xl outline-none transition-all duration-200 placeholder:text-white/40 focus:border-[#532aab] focus:ring-[3px] focus:ring-[#532aab]/15 focus:bg-[#0a0d14]"
+              autocomplete="off">
+            <p class="text-xs text-white/50">A seleção será validada antes do cadastro.</p>
+          </div>
+        }
+
+        <!-- Seletor de Avatar -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-medium text-white/80">Avatar</label>
+          <div class="flex gap-3">
+            <button
+              type="button"
+              (click)="selecionarAvatar('masculino')"
+              class="flex-1 py-3 px-4 border rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-[#05060c] hover:border-[#532aab]/50 focus:outline-none focus:border-[#532aab] focus:ring-1 focus:ring-[#532aab]/50"
+              [class.border-[#532aab]]="avatarSelecionado() === 'masculino'"
+              [class.border-[#2d3139]]="avatarSelecionado() !== 'masculino'"
+              [class.text-[#532aab]]="avatarSelecionado() === 'masculino'"
+              [class.text-white/40]="avatarSelecionado() !== 'masculino'">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <span class="text-[15px]">Masculino</span>
+            </button>
+            <button
+              type="button"
+              (click)="selecionarAvatar('feminino')"
+              class="flex-1 py-3 px-4 border rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-[#05060c] hover:border-[#532aab]/50 focus:outline-none focus:border-[#532aab] focus:ring-1 focus:ring-[#532aab]/50"
+              [class.border-[#532aab]]="avatarSelecionado() === 'feminino'"
+              [class.border-[#2d3139]]="avatarSelecionado() !== 'feminino'"
+              [class.text-[#532aab]]="avatarSelecionado() === 'feminino'"
+              [class.text-white/40]="avatarSelecionado() !== 'feminino'">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+                <path d="M12 14a4 4 0 0 1 4 4"/>
+              </svg>
+              <span class="text-[15px]">Feminino</span>
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="flex items-center justify-center py-4 mt-2 text-[15px] font-semibold text-[#05060c] bg-[#532aab] rounded-xl cursor-pointer transition-all duration-200 hover:brightness-90 disabled:opacity-70 disabled:cursor-not-allowed"
+          [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="w-5 h-5 border-2 border-[#05060c]/30 border-t-[#05060c] rounded-full animate-spin"></span>
+          } @else {
+            Criar Conta
+          }
+        </button>
+      </form>
+    }
+  </div>
+</div>

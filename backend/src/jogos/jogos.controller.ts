@@ -23,6 +23,11 @@ export class JogosController {
     return this.jogosService.findAll();
   }
 
+  @Get('next')
+  getNextMatches() {
+    return this.jogosService.getNextMatches(4);
+  }
+
   @Get('classificacao/grupos')
   getClassificacao() {
     return this.jogosService.getClassificacaoGrupos();
@@ -71,5 +76,13 @@ export class JogosController {
       throw new ForbiddenException('Apenas administradores podem gerar a chave de mata-mata.');
     }
     return this.jogosService.gerarDezesseisAvos();
+  }
+
+  @Patch(':id/alocar')
+  alocarTerceiro(@Param('id') id: string, @Body('selecao_b_id') selecaoBId: number, @Request() req) {
+    if (!req.usuario.isAdmin) {
+      throw new ForbiddenException('Apenas administradores podem alocar vagas no mata-mata.');
+    }
+    return this.jogosService.alocarTerceiro(+id, selecaoBId);
   }
 }

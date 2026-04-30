@@ -1,0 +1,87 @@
+<div class="donut-chart-container">
+  <div class="chart-wrapper">
+    <!-- SVG Donut Chart -->
+    <svg viewBox="-1.2 -1.2 2.4 2.4" class="donut-chart">
+      <!-- Background circle -->
+      <circle cx="0" cy="0" r="1" fill="none" stroke="#2d3139" stroke-width="0.3"/>
+      
+      <!-- Segment: Acertos Exatos (Verde) -->
+      @if (acertosExatosPercent() > 0) {
+        <circle
+          cx="0"
+          cy="0"
+          r="1"
+          fill="none"
+          stroke="#CCFF00"
+          stroke-width="0.3"
+          [attr.stroke-dasharray]="acertosExatosDashArray()"
+          stroke-dashoffset="0"
+          class="segment segment-exact"
+        />
+      }
+
+      <!-- Segment: Acertos por Tendência (Amarelo) -->
+      @if (acertosTendenciaPercent() > 0) {
+        <circle
+          cx="0"
+          cy="0"
+          r="1"
+          fill="none"
+          stroke="#f59e0b"
+          stroke-width="0.3"
+          [attr.stroke-dasharray]="acertosTendenciaDashArray()"
+          [attr.stroke-dashoffset]="acertosTendenciaDashOffset()"
+          class="segment segment-trend"
+        />
+      }
+
+      <!-- Segment: Erros (Vermelho) -->
+      @if (errosPercent() > 0) {
+        <circle
+          cx="0"
+          cy="0"
+          r="1"
+          fill="none"
+          stroke="#ef4444"
+          stroke-width="0.3"
+          [attr.stroke-dasharray]="errosDashArray()"
+          [attr.stroke-dashoffset]="errosDashOffset()"
+          class="segment segment-error"
+        />
+      }
+    </svg>
+    
+    <!-- Center text -->
+    <div class="chart-center">
+      <div class="percentage">{{ totalAcertosPercent() }}%</div>
+      <div class="label">Acertos</div>
+    </div>
+  </div>
+  
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-color bg-[#CCFF00]"></div>
+      <div class="legend-text">
+        <span class="legend-label">Acertos Exatos</span>
+        <span class="legend-value">{{ data().acertosExatos }} ({{ acertosExatosPercent() }}%)</span>
+      </div>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color bg-[#f59e0b]"></div>
+      <div class="legend-text">
+        <span class="legend-label">Acertos por Tendência</span>
+        <span class="legend-value">{{ data().acertosTendencia }} ({{ acertosTendenciaPercent() }}%)</span>
+      </div>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color bg-[#ef4444]"></div>
+      <div class="legend-text">
+        <span class="legend-label">Erros</span>
+        <span class="legend-value">{{ data().erros }} ({{ errosPercent() }}%)</span>
+      </div>
+    </div>
+  </div>
+</div>
