@@ -4,12 +4,11 @@
     <p class="text-sm text-gray-500 font-medium">Entre em um bolão com código de convite ou crie o seu próprio.</p>
   </div>
   <div class="flex gap-4">
-    <div class="bg-white border border-gray-200 px-4 py-2.5 rounded-xl flex items-center gap-3 shadow-sm cursor-pointer hover:bg-gray-50 transition min-w-[200px] justify-between">
+    <div class="bg-white border border-gray-200 px-4 py-2.5 rounded-xl flex items-center gap-3 shadow-sm cursor-pointer hover:bg-gray-50 transition min-w-[200px] justify-center">
       <div class="flex items-center gap-2">
         <span class="text-gray-400">👥</span>
         <span class="text-sm font-bold text-gray-700">Meus Bolões</span>
       </div>
-      <span class="text-gray-400 text-xs">▼</span>
     </div>
   </div>
 </header>
@@ -76,8 +75,18 @@
       @if (bolao.isAdmin || $index === 0) {
         <div class="absolute top-0 left-6 bg-green-100 text-green-700 text-[8px] font-black uppercase px-2 py-1 rounded-b-md">Admin</div>
       }
-      <div class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer">
-        ⋮
+      <div class="absolute top-4 right-4">
+        <button (click)="toggleMenu(bolao.id, $event)" class="text-gray-400 hover:text-gray-600 cursor-pointer p-1 rounded-full hover:bg-gray-50 transition-colors">
+          ⋮
+        </button>
+        
+        @if (menuAbertoId === bolao.id) {
+          <div class="absolute right-0 mt-1 w-40 bg-white border border-gray-100 rounded-xl shadow-lg z-20 py-1 overflow-hidden">
+            <button (click)="deletarBolao(bolao.id); $event.stopPropagation()" class="w-full text-left px-4 py-2 text-xs font-bold text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
+              <span>🗑️</span> Excluir Bolão
+            </button>
+          </div>
+        }
       </div>
       
       <div class="flex items-center gap-4 mb-6 mt-4">
@@ -106,11 +115,8 @@
         </div>
         
         <div class="flex gap-2 mt-auto">
-          <button (click)="compartilharWhatsApp(bolao.codigo_convite)" class="flex-1 bg-green-600 text-white py-2.5 rounded-xl font-bold text-[11px] hover:bg-green-700 transition flex items-center justify-center gap-1">
+          <button (click)="compartilharWhatsApp(bolao.codigo_convite)" class="w-full bg-green-600 text-white py-2.5 rounded-xl font-bold text-[11px] hover:bg-green-700 transition flex items-center justify-center gap-1">
             <span>💬</span> Compartilhar
-          </button>
-          <button class="flex-1 bg-white border-2 border-gray-100 text-gray-600 py-2.5 rounded-xl font-bold text-[11px] hover:bg-gray-50 transition flex items-center justify-center gap-1">
-            <span>⚙️</span> Gerenciar
           </button>
         </div>
       } @else {
@@ -120,7 +126,7 @@
           <p class="text-sm font-black text-gray-600">{{ bolao.pontos || '128' }} pts</p>
         </div>
         
-        <button class="w-full mt-auto bg-[#4f39f6] text-white py-3 rounded-xl font-bold text-xs hover:bg-[#3d2bd1] transition shadow-md">
+        <button (click)="verRanking(bolao)" class="w-full mt-auto bg-[#4f39f6] text-white py-3 rounded-xl font-bold text-xs hover:bg-[#3d2bd1] transition shadow-md">
           Ver Ranking
         </button>
       }
@@ -140,19 +146,29 @@
   <div class="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl relative">
     <button (click)="fecharModalConfirmar()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">✕</button>
     
-    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
-      👥
-    </div>
-    
-    <h3 class="text-xl font-black text-[#05060c] mb-2 text-center">Entrar no bolão</h3>
-    <p class="text-sm text-gray-500 mb-2 text-center">Deseja entrar no bolão</p>
-    <p class="text-lg font-black text-green-600 mb-4 text-center">"{{ bolaoEncontrado?.nome }}" ?</p>
-    <p class="text-[11px] text-gray-400 text-center mb-8 px-4 leading-relaxed">Você terá acesso aos palpites, ranking e poderá competir com os demais participantes.</p>
-    
-    <div class="flex gap-3">
-      <button (click)="fecharModalConfirmar()" class="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition text-sm">Cancelar</button>
-      <button (click)="entrarNoBolao()" class="flex-1 bg-[#4f39f6] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-[#3d2bd1] transition shadow-md">Entrar no Bolão</button>
-    </div>
+    @if (!sucessoEntrada) {
+      <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+        👥
+      </div>
+      
+      <h3 class="text-xl font-black text-[#05060c] mb-2 text-center">Entrar no bolão</h3>
+      <p class="text-sm text-gray-500 mb-2 text-center">Deseja entrar no bolão</p>
+      <p class="text-lg font-black text-green-600 mb-4 text-center">"{{ bolaoEncontrado?.nome }}" ?</p>
+      <p class="text-[11px] text-gray-400 text-center mb-8 px-4 leading-relaxed">Você terá acesso aos palpites, ranking e poderá competir com os demais participantes.</p>
+      
+      <div class="flex gap-3">
+        <button (click)="fecharModalConfirmar()" class="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition text-sm">Cancelar</button>
+        <button (click)="entrarNoBolao()" class="flex-1 bg-[#4f39f6] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-[#3d2bd1] transition shadow-md">Entrar no Bolão</button>
+      </div>
+    } @else {
+      <div class="py-8 text-center">
+        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-5xl mx-auto mb-6 animate-bounce">
+          ✅
+        </div>
+        <h3 class="text-2xl font-black text-green-600 mb-2">Entrada realizada com sucesso</h3>
+        <p class="text-gray-500 text-sm">Preparando tudo para você...</p>
+      </div>
+    }
   </div>
 </div>
 }
@@ -170,14 +186,82 @@
     <h3 class="text-xl font-black text-[#05060c] mb-2 text-center">Criar Novo Bolão</h3>
     <p class="text-[11px] text-gray-400 text-center mb-8 px-8 leading-relaxed">Dê um nome para o seu bolão e comece a convidar seus amigos!</p>
     
-    <div class="mb-8">
+    <div class="mb-4">
       <label class="block text-xs font-bold text-gray-700 mb-2">Nome do Bolão</label>
       <input type="text" [(ngModel)]="novoBolaoNome" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-bold focus:border-[#4f39f6] outline-none transition text-gray-800" placeholder="Ex: Bolão da Firma, Família Cup, Resenha FC...">
+    </div>
+
+    <div class="mb-8">
+      <label class="block text-xs font-bold text-gray-700 mb-2">Descrição (Opcional)</label>
+      <textarea [(ngModel)]="novoBolaoDescricao" class="w-full bg-white border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-bold focus:border-[#4f39f6] outline-none transition text-gray-800 resize-none h-24" placeholder="Descreva as regras, premiação ou qualquer outra informação importante..."></textarea>
     </div>
 
     <div class="flex gap-3">
       <button (click)="fecharModalCriar()" class="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition text-sm">Cancelar</button>
       <button (click)="criarBolao()" class="flex-1 bg-[#4f39f6] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-[#3d2bd1] transition shadow-md">Criar Bolão</button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal Ranking -->
+@if (mostrarModalRanking) {
+<div class="fixed inset-0 bg-[#0b0e14]/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-3xl p-8 w-full max-w-2xl shadow-2xl relative">
+    <button (click)="fecharModalRanking()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">✕</button>
+    
+    <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-6">
+      🏆
+    </div>
+    
+    <h3 class="text-xl font-black text-[#05060c] mb-1 text-center">Ranking do Bolão</h3>
+    <p class="text-sm text-gray-500 mb-8 text-center">"{{ bolaoSelecionadoNome }}"</p>
+    
+    <div class="max-h-[400px] overflow-y-auto pr-2">
+      <table class="w-full">
+        <thead class="text-[10px] text-gray-400 uppercase font-black border-b border-gray-50">
+          <tr>
+            <th class="text-left pb-4 w-12">Pos</th>
+            <th class="text-left pb-4">Participante</th>
+            <th class="text-right pb-4">Pontos</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+          @for (item of rankingAtual; track item.usuario_id; let i = $index) {
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="py-4">
+                <span [ngClass]="{
+                  'bg-yellow-100 text-yellow-700': i === 0,
+                  'bg-gray-100 text-gray-700': i === 1,
+                  'bg-orange-100 text-orange-700': i === 2,
+                  'text-gray-400': i > 2
+                }" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black">
+                  {{ i + 1 }}º
+                </span>
+              </td>
+              <td class="py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-[#4f39f6]/10 text-[#4f39f6] flex items-center justify-center font-bold text-xs">
+                    {{ item.nome?.substring(0, 1).toUpperCase() }}
+                  </div>
+                  <span class="font-bold text-gray-900 text-sm">{{ item.nome }}</span>
+                </div>
+              </td>
+              <td class="py-4 text-right">
+                <span class="font-black text-[#4f39f6]">{{ item.pontos }} pts</span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="3" class="py-10 text-center text-gray-400 text-sm italic">Carregando ranking...</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="mt-8">
+      <button (click)="fecharModalRanking()" class="w-full bg-gray-50 border border-gray-200 text-gray-600 px-4 py-3 rounded-xl font-bold text-sm hover:bg-gray-100 transition">Fechar Ranking</button>
     </div>
   </div>
 </div>

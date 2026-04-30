@@ -1,0 +1,21 @@
+/* Remove spin buttons from number inputs */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+input[type=number] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
+.score-input {
+  text-align: center !important;
+  padding: 0 !important;
+  text-indent: 0 !important;
+  line-height: normal !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
