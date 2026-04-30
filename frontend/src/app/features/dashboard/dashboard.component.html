@@ -48,21 +48,9 @@
           <!-- Avatar (esquerda) -->
           <div class="flex-shrink-0">
             <div
-              class="w-20 h-20 rounded-full bg-[#532aab]/10 flex items-center justify-center border-2 border-[#532aab]/30">
-              @if (usuario()?.avatar === 'feminino') {
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-                <path d="M12 14a4 4 0 0 1 4 4" />
-              </svg>
-              } @else {
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#532aab" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-              }
+              class="w-20 h-20 rounded-full bg-[#532aab]/10 flex items-center justify-center border-2 border-[#532aab]/30 overflow-hidden">
+              <img [src]="usuario()?.avatar === 'feminino' ? 'assets/avatars/female.svg' : 'assets/avatars/male.svg'"
+                alt="Avatar" class="w-full h-full object-cover">
             </div>
           </div>
 

@@ -1,9 +1,10 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { SelecoesService } from '../../core/services/selecoes.service';
+import { ConfigService } from '../../core/services/config.service';
 import { LoginRequest, CadastroRequest } from '../../core/models/usuario.model';
 import { Selecao } from '../../core/models/selecao.model';
 
@@ -18,12 +19,18 @@ type SelecaoOption = { id: number; nome: string } | { id: 'outra'; nome: 'Outra 
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private selecoesService = inject(SelecoesService);
+  private configService = inject(ConfigService);
   private router = inject(Router);
 
   mode = signal<AuthMode>('login');
+
+  // Contador regressivo
+  countdown = signal({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
+  copaIniciada = signal(false);
+  private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
   // Login
   loginEmail = signal('');
@@ -85,6 +92,50 @@ export class AuthComponent implements OnInit {
   ngOnInit(): void {
     // Usar seleções populares locais, não mock do service
     this.selecoes.set(this.selecoesPopulares);
+
+    // Buscar data da Copa e iniciar contador
+    this.configService.getWorldCupDate().subscribe({
+      next: (config) => {
+        this.startCountdown(new Date(config.startDate));
+      },
+      error: () => {
+        // Fallback: 11/06/2026
+        this.startCountdown(new Date('2026-06-11T00:00:00Z'));
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+  }
+
+  private startCountdown(targetDate: Date): void {
+    const update = () => {
+      const now = new Date().getTime();
+      const distance = targetDate.getTime() - now;
+
+      if (distance <= 0) {
+        this.copaIniciada.set(true);
+        this.countdown.set({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
+        if (this.countdownInterval) {
+          clearInterval(this.countdownInterval);
+          this.countdownInterval = null;
+        }
+        return;
+      }
+
+      this.countdown.set({
+        dias: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        horas: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutos: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        segundos: Math.floor((distance % (1000 * 60)) / 1000)
+      });
+    };
+
+    update();
+    this.countdownInterval = setInterval(update, 1000);
   }
 
   onSelecaoChange(event: Event): void {

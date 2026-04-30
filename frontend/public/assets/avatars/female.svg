@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <circle cx="50" cy="50" r="48" fill="#2a2d35" stroke="#666" stroke-width="2"/>
+  <!-- Cabelo feminino (mais longo) -->
+  <path d="M28 50c0-16 10-26 22-26s22 10 22 26v8c0 6-4 10-10 10H38c-6 0-10-4-10-10v-8z" fill="#3a3d45" stroke="#888" stroke-width="1.5"/>
+  <!-- Cabeça -->
+  <circle cx="50" cy="38" r="16" fill="#3a3d45" stroke="#888" stroke-width="1.5"/>
+  <!-- Franja/cabelo topo -->
+  <path d="M34 36c0-12 7-18 16-18s16 6 16 18" fill="none" stroke="#888" stroke-width="1.5"/>
+  <!-- Pescoço -->
+  <rect x="44" y="52" width="12" height="8" fill="#3a3d45" stroke="#888" stroke-width="1"/>
+  <!-- Corpo/blusa com gola V -->
+  <path d="M32 60c0-2 4-4 8-4h20c4 0 8 2 8 4v22c0 2-2 4-4 4H36c-2 0-4-2-4-4V60z" fill="#3a3d45" stroke="#888" stroke-width="1.5"/>
+  <!-- Gola V -->
+  <path d="M42 60l8 10 8-10" fill="none" stroke="#888" stroke-width="1.5"/>
+  <!-- Ombros -->
+  <path d="M24 70c0-4 4-8 10-8" fill="#3a3d45" stroke="#888" stroke-width="1.5"/>
+  <path d="M76 70c0-4-4-8-10-8" fill="#3a3d45" stroke="#888" stroke-width="1.5"/>
+</svg>
