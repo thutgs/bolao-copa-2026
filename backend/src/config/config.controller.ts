@@ -4,6 +4,7 @@ import { Controller, Get } from '@nestjs/common';
 export class ConfigController {
   @Get('world-cup')
   getWorldCupDate() {
-    return { startDate: '2026-06-11T00:00:00Z' };
+    // 11 de Junho de 2026 às 16:00 no fuso UTC-3 (Brasília)
+    return { startDate: '2026-06-11T16:00:00-03:00' };
   }
 }

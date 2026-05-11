@@ -8,15 +8,14 @@ dotenv.config();
 
 const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5433,           // O porto que você está usando
-  username: 'postgres',
-  password: '',         // Deixe vazio conforme o seu código original
-  database: 'bolao_copa_2026',
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT || '5432', 10),
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS, 
+  database: process.env.DB_NAME,
   entities: [Selecao, Jogo],
   synchronize: false,
 });
-
 // A sua lista oficial de seleções
 const selecoesData = [
   // GRUPO A

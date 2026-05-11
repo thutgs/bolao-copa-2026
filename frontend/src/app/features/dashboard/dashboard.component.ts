@@ -308,8 +308,9 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  selecionarBolao(id: number): void {
-    this.bolaoSelecionado.set(id);
+  selecionarBolao(id: string | number): void {
+    // O Number() garante que, mesmo vindo do HTML como texto, vire número
+    this.bolaoSelecionado.set(Number(id)); 
     this.carregarDados();
   }
 
